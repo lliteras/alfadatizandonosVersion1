@@ -32,10 +32,10 @@ def extract_provinces(spark, sqlContext, data):
 	headers = provincias.first().__fields__
 	provincias_table = Establishment.create_table_with_id(table_name, headers)
 	provincias.write.format("jdbc")\
-				    .option("url", ("jdbc:postgresql://localhost:5432/CeoDatum")) \
+				    .option("url", ("jdbc:postgresql://${DB_HOST}:5432/${DB_NAME}")) \
 				    .option("dbtable", "province") \
-				    .option("user", "ceodatum") \
-				    .option("password", "superfuerte") \
+				    .option("user", "${DB_USER}") \
+				    .option("password", "${DB_PASS}") \
 				    .option("driver", "org.postgresql.Driver") \
 				    .mode("append")\
 				    .save()
@@ -53,10 +53,10 @@ def extract_cities(spark, sqlContext, data, provincias):
 	headers = result.first().__fields__
 	ciudades_table = Establishment.create_table_with_id(table_name, headers)
 	result.write.format("jdbc")\
-				    .option("url", ("jdbc:postgresql://localhost:5432/CeoDatum")) \
+				    .option("url", ("jdbc:postgresql://${DB_HOST}:5432/${DB_NAME}")) \
 				    .option("dbtable", "province") \
-				    .option("user", "ceodatum") \
-				    .option("password", "superfuerte") \
+				    .option("user", "${DB_USER}") \
+				    .option("password", "${DB_PASS}") \
 				    .option("driver", "org.postgresql.Driver") \
 				    .mode("append")\
 				    .save()
@@ -74,10 +74,10 @@ def extract_establishment(spark, sqlContext, data, ciudades):
 	headers = result.first().__fields__
 	establecimientos_table = Establishment.create_table_with_id(table_name, headers)
 	result.write.format("jdbc")\
-				    .option("url", ("jdbc:postgresql://localhost:5432/CeoDatum")) \
+				    .option("url", ("jdbc:postgresql://${DB_HOST}:5432/${DB_NAME}")) \
 				    .option("dbtable", "province") \
-				    .option("user", "ceodatum") \
-				    .option("password", "superfuerte") \
+				    .option("user", "${DB_USER}") \
+				    .option("password", "${DB_PASS}") \
 				    .option("driver", "org.postgresql.Driver") \
 				    .mode("append")\
 				    .save()

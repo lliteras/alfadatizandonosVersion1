@@ -13,6 +13,7 @@ RUN apt update && apt install -y libjpeg-dev zlib1g-dev \
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o run.sh
 RUN chmod 744 run.sh
 RUN ./run.sh -y
+RUN rm run.sh
 
 WORKDIR /app
 
@@ -24,9 +25,9 @@ RUN touch log/error.log
 RUN touch log/access.log
 RUN chown 1000140001 venv log/error.log log/access.log
 
-USER 1000140001
+RUN apt install -y gettext
 
-COPY ./CeoDatumEnv .
+USER 1000140001
 
 ENV VIRTUAL_ENV=venv
 RUN python3 -m venv $VIRTUAL_ENV
@@ -34,6 +35,18 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 RUN pip3 install --no-cache-dir -r requirements.txt
 
+COPY --chown=1000140001 ./CeoDatumEnv .
+
 EXPOSE 5000
 
-CMD gunicorn index -b 0.0.0.0:5000 --error-logfile log/error.log --access-logfile log/access.log
+USER root
+
+RUN useradd -rm -d /home/py -s /bin/bash -u 1000140001 py
+
+USER 1000140001
+
+CMD envsubst < config.py.template > config.py && \
+    envsubst < resources/home.py.template > resources/home.py && \
+    envsubst < resources/educational_establishments/extracting_data.py.template > resources/educational_establishments/extracting_data.py && \
+    gunicorn index:app -b 0.0.0.0:5000 
+    #--error-logfile log/error.log --access-logfile log/access.log

@@ -162,10 +162,10 @@ def configurateUploadJSON ():
 					factTable = sqlContext.sql(' SELECT factTable.id_'+firstRelationName+' as id FROM factTable as factTable ')
 
 					factTable.write.format("jdbc")\
-						    .option("url", ("jdbc:postgresql://localhost:5432/" + database)) \
+						    .option("url", ("jdbc:postgresql://${DB_HOST}:5432/" + database)) \
 						    .option("dbtable", ("\""+database+"\"")) \
-						    .option("user", "ceodatum") \
-						    .option("password", "superfuerte") \
+						    .option("user", "${DB_USER}") \
+						    .option("password", "${DB_PASS}") \
 						    .option("driver", "org.postgresql.Driver") \
 						    .mode("append")\
 						    .save()
@@ -177,10 +177,10 @@ def configurateUploadJSON ():
 					df = sqlContext.sql(' SELECT factTable.id_'+firstRelationName+' as id_'+database+', factTable.id_'+firstRelationName+' as id_'+firstRelationName+' FROM factTable as factTable ')   
 
 					df.write.format("jdbc")\
-							    .option("url", ("jdbc:postgresql://localhost:5432/" + database)) \
+							    .option("url", ("jdbc:postgresql://${DB_HOST}:5432/" + database)) \
 							    .option("dbtable", ("\""+database+"-"+firstRelationName+"\"")) \
-							    .option("user", "ceodatum") \
-							    .option("password", "superfuerte") \
+							    .option("user", "${DB_USER}") \
+							    .option("password", "${DB_PASS}") \
 							    .option("driver", "org.postgresql.Driver") \
 							    .mode("append")\
 							    .save()
@@ -313,10 +313,10 @@ def JSONRecursion(database, data, firstRow, sqlContext, spark, idTable, pos, pos
 			dataJoin = dataJoin.select('id_'+objectName, 'id_'+x)
 
 			dataJoin.write.format("jdbc")\
-			    .option("url", ("jdbc:postgresql://localhost:5432/" + database)) \
+			    .option("url", ("jdbc:postgresql://${DB_HOST}:5432/" + database)) \
 			    .option("dbtable", ("\""+objectName+"-"+x+"\"")) \
-			    .option("user", "ceodatum") \
-			    .option("password", "superfuerte") \
+			    .option("user", "${DB_USER}") \
+			    .option("password", "${DB_PASS}") \
 			    .option("driver", "org.postgresql.Driver") \
 			    .mode("append")\
 			    .save()
@@ -377,10 +377,10 @@ def JSONRecursion(database, data, firstRow, sqlContext, spark, idTable, pos, pos
 						table = table.withColumn(x, table[x].cast(dictionaryTypes[xType]))
 
 				table.write.format("jdbc")\
-				    .option("url", ("jdbc:postgresql://localhost:5432/" + database)) \
+				    .option("url", ("jdbc:postgresql://${DB_HOST}:5432/" + database)) \
 				    .option("dbtable", ("\""+'object-'+objectName+'-'+x+"\"")) \
-				    .option("user", "ceodatum") \
-				    .option("password", "superfuerte") \
+				    .option("user", "${DB_USER}") \
+				    .option("password", "${DB_PASS}") \
 				    .option("driver", "org.postgresql.Driver") \
 				    .mode("append")\
 				    .save()
@@ -399,10 +399,10 @@ def JSONRecursion(database, data, firstRow, sqlContext, spark, idTable, pos, pos
 				relationTable = sqlContext.sql('SELECT factTable.id_'+objectName+' as id_'+objectName+', t'+ str(pos) +'.id as id_'+x+' FROM t'+str(posObject)+' as factTable ' + 'INNER JOIN t'+str(pos)+' as t'+str(pos)+' ON factTable.'+x+' = t'+str(pos)+'.'+x )
 
 				relationTable.write.format("jdbc")\
-					.option("url", ("jdbc:postgresql://localhost:5432/" + database)) \
+					.option("url", ("jdbc:postgresql://${DB_HOST}:5432/" + database)) \
 					.option("dbtable", ("\""+objectName+"-"+x+"\"")) \
-					.option("user", "ceodatum") \
-			    	.option("password", "superfuerte") \
+					.option("user", "${DB_USER}") \
+			    	.option("password", "${DB_PASS}") \
 			    	.option("driver", "org.postgresql.Driver") \
 			    	.mode("append")\
 			    	.save()
@@ -489,10 +489,10 @@ def configurateUploadCSV():
 					factTable = sqlContext.sql(' SELECT factTable.id_'+database+' as id FROM t0 as factTable ')
 
 					factTable.write.format("jdbc")\
-						    .option("url", ("jdbc:postgresql://localhost:5432/" + database)) \
+						    .option("url", ("jdbc:postgresql://${DB_HOST}:5432/" + database)) \
 						    .option("dbtable", ("\""+database+"\"")) \
-						    .option("user", "ceodatum") \
-						    .option("password", "superfuerte") \
+						    .option("user", "${DB_USER}") \
+						    .option("password", "${DB_PASS}") \
 						    .option("driver", "org.postgresql.Driver") \
 						    .mode("append")\
 						    .save()
