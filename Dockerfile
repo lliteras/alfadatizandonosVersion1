@@ -24,11 +24,11 @@ RUN mkdir log
 RUN mkdir /tmp/.ivy
 RUN touch log/error.log
 RUN touch log/access.log
-RUN chown 1000140001 venv /tmp/.ivy log/error.log log/access.log
+RUN chown 1000110000 venv /tmp/.ivy log/error.log log/access.log
 
 RUN apt install -y gettext libnss-wrapper
 
-USER 1000140001
+USER 1000110000
 
 ENV VIRTUAL_ENV=venv
 RUN python3 -m venv $VIRTUAL_ENV
@@ -36,20 +36,20 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-COPY --chown=1000140001 ./app .
+COPY --chown=1000110000 ./app .
 
 EXPOSE 5000
 
-COPY --chown=1000140001 passwd.template /etc/
+COPY --chown=1000110000 passwd.template /etc/
 
 #variables $DB_HOST, DB_NAME, $DB_USER, $DB_PASS
 
-CMD export USER_ID=$(id -u) && \
-    export GROUP_ID=$(id -g) && \
-    envsubst < /etc/passwd.template > /tmp/passwd && \
+CMD envsubst < /etc/passwd.template > /tmp/passwd && \
     envsubst < config.py.template > config.py && \
     envsubst < resources/home.py.template > resources/home.py && \
     envsubst < resources/educational_establishments/extracting_data.py.template > resources/educational_establishments/extracting_data.py && \
+    export USER_ID=$(id -u) && \
+    export GROUP_ID=$(id -g) && \
     LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libnss_wrapper.so \
     NSS_WRAPPER_PASSWD=/tmp/passwd \
     NSS_WRAPPER_GROUP=/etc/group \
