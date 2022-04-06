@@ -35,18 +35,13 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-COPY --chown=1000140001 ./CeoDatumEnv .
+COPY --chown=1000140001 ./app .
 
 EXPOSE 5000
 
-USER root
-
-RUN useradd -rm -d /home/py -s /bin/bash -u 1000140001 py
-
-USER 1000140001
+#variables $DB_HOST, DB_NAME, $DB_USER, $DB_PASS
 
 CMD envsubst < config.py.template > config.py && \
     envsubst < resources/home.py.template > resources/home.py && \
     envsubst < resources/educational_establishments/extracting_data.py.template > resources/educational_establishments/extracting_data.py && \
-    gunicorn index:app -b 0.0.0.0:5000 
-    #--error-logfile log/error.log --access-logfile log/access.log
+    gunicorn index:app -b 0.0.0.0:5000 --error-logfile log/error.log --access-logfile log/access.log

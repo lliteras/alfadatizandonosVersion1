@@ -17,7 +17,7 @@ filename = 'establecimiento_educ.csv'
 
 def extract_data():
 	table_name = 'establecimientos_educativos'
-	spark = SparkSession.builder.appName("CeoDatum").config("spark.jars", (os.path.join("resources","postgresql-42.3.0.jar"))).getOrCreate()
+	spark = SparkSession.builder.appName("Alfadatizando").config("spark.jars", (os.path.join("resources","postgresql-42.3.0.jar"))).getOrCreate()
 	sqlContext = SQLContext(spark)
 	data = spark.read.csv(UPLOAD_FOLDER + filename, header=True, mode="DROPMALFORMED")
 	data = data.withColumnRenamed("Jurisdicción", "jurisdiccion")

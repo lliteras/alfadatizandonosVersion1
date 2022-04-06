@@ -65,7 +65,7 @@ class Home(object):
 		return None	
 
 	@classmethod
-	def add_new_database_to_ceoDatum(cls, databaseName, ownerId, share):
+	def add_new_database_to_alfadatizando(cls, databaseName, ownerId, share):
 		
 
 		con = get_db()
@@ -82,7 +82,7 @@ class Home(object):
 		return cursor.fetchone()
 
 	@classmethod
-	def add_fact_table_ceoDatum(cls, databaseName, databaseId):
+	def add_fact_table_alfadatizando(cls, databaseName, databaseId):
 
 		con = get_db()
 
@@ -105,7 +105,7 @@ class Home(object):
 
 
 	@classmethod
-	def add_columns_to_ceoDatum(cls, tableName, tableId, columnType):
+	def add_columns_to_alfadatizando(cls, tableName, tableId, columnType):
 		
 
 		con = get_db()
@@ -183,7 +183,7 @@ class Home(object):
 		return None	
 
 	@classmethod
-	def add_table_and_columns_to_ceoDatum_recursion(cls, tableName, objectName, tableId):
+	def add_table_and_columns_to_alfadatizando_recursion(cls, tableName, objectName, tableId):
 		
 		con = get_db()
 

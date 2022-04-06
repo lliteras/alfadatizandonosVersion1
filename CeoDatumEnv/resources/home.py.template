@@ -61,7 +61,7 @@ def uploadFile():
 
 				if fileType == 'csv':
 
-					spark = SparkSession.builder.appName("CeoDatum").config("spark.jars", (os.path.join("resources","postgresql-42.3.0.jar"))).getOrCreate()
+					spark = SparkSession.builder.appName("Alfadatizando").config("spark.jars", (os.path.join("resources","postgresql-42.3.0.jar"))).getOrCreate()
 					sqlContext = SQLContext(spark)
 
 					firstRow = sqlContext.read.format("csv").option("encoding", "UTF-8").load(os.path.join(UPLOAD_FOLDER,filename)).limit(2).first()
@@ -117,7 +117,7 @@ def configurateUploadJSON ():
 
 					Home.create_database(database)
 
-					databaseInCeoDatum = Home.add_new_database_to_ceoDatum(database, str(sessionId), share)
+					databaseInAlfadatizando = Home.add_new_database_to_alfadatizando(database, str(sessionId), share)
 
 					if share == 'protegido':
 
@@ -125,9 +125,9 @@ def configurateUploadJSON ():
 
 						establishments = request.form.getlist('establisment')
 
-						Home.add_dataset_stablishment(databaseInCeoDatum['id'], establishments)
+						Home.add_dataset_stablishment(databaseInAlfadatizando['id'], establishments)
 					
-					spark = SparkSession.builder.appName("CeoDatum").config("spark.jars", (os.path.join("resources","postgresql-42.3.0.jar"))).getOrCreate()
+					spark = SparkSession.builder.appName("Alfadatizando").config("spark.jars", (os.path.join("resources","postgresql-42.3.0.jar"))).getOrCreate()
 					sqlContext = SQLContext(spark)
 
 					#data = sqlContext.read.json(os.path.join(UPLOAD_FOLDER,filename))
@@ -149,7 +149,7 @@ def configurateUploadJSON ():
 
 					data.registerTempTable('factTable')
 
-					factTableInCeoDatum = Home.add_fact_table_ceoDatum(database, databaseInCeoDatum['id'])
+					factTableInAlfadatizando = Home.add_fact_table_alfadatizando(database, databaseInAlfadatizando['id'])
 
 					pos = 0
 
@@ -185,7 +185,7 @@ def configurateUploadJSON ():
 							    .mode("append")\
 							    .save()
 
-					objectTable = Home.add_table_and_columns_to_ceoDatum_recursion(firstRelationName, database, factTableInCeoDatum['id'])    
+					objectTable = Home.add_table_and_columns_to_alfadatizando_recursion(firstRelationName, database, factTableInAlfadatizando['id'])    
 
 					JSONRecursion(database, data, firstRow, sqlContext, spark, objectTable['id'], pos+1, pos, firstRelationName, dateFormat)	
 
@@ -321,7 +321,7 @@ def JSONRecursion(database, data, firstRow, sqlContext, spark, idTable, pos, pos
 			    .mode("append")\
 			    .save()
 
-			objectTable = Home.add_table_and_columns_to_ceoDatum_recursion(x, database+'-'+objectName, idTable)    
+			objectTable = Home.add_table_and_columns_to_alfadatizando_recursion(x, database+'-'+objectName, idTable)    
 
 			pos = JSONRecursion(database, df, firstRow[x], sqlContext, spark, objectTable['id'], pos+1, pos, x, dateFormat)    
 
@@ -341,7 +341,7 @@ def JSONRecursion(database, data, firstRow, sqlContext, spark, idTable, pos, pos
 
 				Home.create_table_recursion('object-'+objectName+'-'+x, database, xType,x)
 
-				tableInCeoDatum = Home.add_columns_to_ceoDatum(x, idTable, xType)
+				tableInAlfadatizando = Home.add_columns_to_alfadatizando(x, idTable, xType)
 
 				table = data.select(x).distinct()
 
@@ -439,7 +439,7 @@ def configurateUploadCSV():
 
 					Home.create_database(database)
 
-					databaseInCeoDatum = Home.add_new_database_to_ceoDatum(database, str(sessionId), share)
+					databaseInAlfadatizando = Home.add_new_database_to_alfadatizando(database, str(sessionId), share)
 
 					if share == 'protegido':
 
@@ -447,9 +447,9 @@ def configurateUploadCSV():
 
 						establishments = request.form.getlist('establisment')
 
-						Home.add_dataset_stablishment(databaseInCeoDatum['id'], establishments)
+						Home.add_dataset_stablishment(databaseInAlfadatizando['id'], establishments)
 
-					spark = SparkSession.builder.appName("CeoDatum").config("spark.jars", (os.path.join("resources","postgresql-42.3.0.jar"))).getOrCreate()
+					spark = SparkSession.builder.appName("Alfadatizando").config("spark.jars", (os.path.join("resources","postgresql-42.3.0.jar"))).getOrCreate()
 					sqlContext = SQLContext(spark)
 
 					data = sqlContext.read.format("csv").option("encoding", "UTF-8").load(os.path.join(UPLOAD_FOLDER,filename))
@@ -473,15 +473,15 @@ def configurateUploadCSV():
 
 					data.registerTempTable('t0')
 
-					factTableInCeoDatum = Home.add_fact_table_ceoDatum(database, databaseInCeoDatum['id'])		
+					factTableInAlfadatizando = Home.add_fact_table_alfadatizando(database, databaseInAlfadatizando['id'])		
 
 					firstRow = data.first()
 
 					firstRowFields = firstRow.__fields__
 
-					idTable = factTableInCeoDatum['id']
+					idTable = factTableInAlfadatizando['id']
 
-					JSONRecursion(database, data, firstRow, sqlContext, spark, factTableInCeoDatum['id'], 1, 0, database, dateFormat)	
+					JSONRecursion(database, data, firstRow, sqlContext, spark, factTableInAlfadatizando['id'], 1, 0, database, dateFormat)	
 
 					#fact_table
 					Home.create_fact_table(database)	
