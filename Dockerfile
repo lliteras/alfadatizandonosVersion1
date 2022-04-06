@@ -22,9 +22,10 @@ COPY ./requirements.txt requirements.txt
 RUN mkdir venv  
 RUN mkdir log
 RUN mkdir /tmp/.ivy
+RUN mkdir /tmp/py
 RUN touch log/error.log
 RUN touch log/access.log
-RUN chown 1000110000 venv /tmp/.ivy log/error.log log/access.log
+RUN chown 1000110000 venv /tmp/py /tmp/.ivy log/error.log log/access.log
 
 RUN apt install -y gettext libnss-wrapper
 
@@ -40,16 +41,13 @@ COPY --chown=1000110000 ./app .
 
 EXPOSE 5000
 
-COPY --chown=1000110000 passwd.template /etc/
+COPY --chown=1000110000 passwd /tmp/
 
 #variables $DB_HOST, DB_NAME, $DB_USER, $DB_PASS
 
-CMD envsubst < /etc/passwd.template > /tmp/passwd && \
-    envsubst < config.py.template > config.py && \
+CMD envsubst < config.py.template > config.py && \
     envsubst < resources/home.py.template > resources/home.py && \
     envsubst < resources/educational_establishments/extracting_data.py.template > resources/educational_establishments/extracting_data.py && \
-    export USER_ID=$(id -u) && \
-    export GROUP_ID=$(id -g) && \
     LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libnss_wrapper.so \
     NSS_WRAPPER_PASSWD=/tmp/passwd \
     NSS_WRAPPER_GROUP=/etc/group \
