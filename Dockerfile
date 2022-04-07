@@ -51,4 +51,7 @@ CMD envsubst < config.py.template > config.py && \
     LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libnss_wrapper.so \
     NSS_WRAPPER_PASSWD=/tmp/passwd \
     NSS_WRAPPER_GROUP=/etc/group \
-    gunicorn index:app -b 0.0.0.0:5000 --error-logfile log/error.log --access-logfile log/access.log
+    gunicorn index:app -b 0.0.0.0:5000 \
+    --workers "$NUM_WORKERS" \
+    --timeout "$TIMEOUT" \
+    --error-logfile log/error.log --access-logfile log/access.log
