@@ -29,6 +29,8 @@ RUN chown 1000110000 venv /tmp/py /tmp/.ivy log/error.log log/access.log
 
 RUN apt install -y gettext libnss-wrapper
 
+RUN apt install -y nano
+
 USER 1000110000
 
 ENV VIRTUAL_ENV=venv
