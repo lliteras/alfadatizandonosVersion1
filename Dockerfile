@@ -31,6 +31,9 @@ RUN apt install -y gettext libnss-wrapper
 
 RUN apt install -y nano
 
+RUN mkdir -p /.config/matplotlib
+RUN chown 1000110000 /.config/matplotlib
+
 USER 1000110000
 
 ENV VIRTUAL_ENV=venv
@@ -56,4 +59,6 @@ CMD envsubst < config.py.template > config.py && \
     gunicorn index:app -b 0.0.0.0:5000 \
     --workers "$NUM_WORKERS" \
     --timeout "$TIMEOUT" \
+    --keep-alive "$KEEP_ALIVE"\
+    --capture-output --log-level debug\
     --error-logfile log/error.log --access-logfile log/access.log
