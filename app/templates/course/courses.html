@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% block header %}
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='styles/courses.css') }}">
 {% endblock%}
 {% block title %}Cursos{% endblock %}
 {% block content %}
@@ -16,7 +17,7 @@
 		  </thead>
 		  <tbody>
 		  	{% for curso in cursos %}
-		    <tr onclick="function1({{curso.id}});">
+		    <tr class="course-row" onclick="function1({{curso.id}});">
 		      <td>{{ curso.name }}</td>
 		      <td>{{ curso.start_date }}</td>
 		      <td>{{ curso.end_date }}</td>

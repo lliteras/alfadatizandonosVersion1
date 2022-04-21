@@ -51,8 +51,20 @@
           {% endif %}          
           {% endif %}
           {% if session.actualRole == 'professor' %}
-            <li class="nav-item">
-              <a class="nav-link " aria-current="page" href="{{url_for('courses')}}">Cursos</a>
+            <li class="nav-item dropdown">
+              <a class="nav-link " aria-current="page" >Cursos</a>
+              <ul>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{url_for('courses')}}">
+                    Mis cursos
+                  </a>
+                </li>
+                <li>
+                  <a class="nav-link" href="{{url_for('new_course')}}">
+                    Crear curso
+                  </a>
+                </li>
+              </ul>
             </li>
           {% endif %}
           {% if session.actualRole == 'admin' or session.actualRole == 'superadmin'%}

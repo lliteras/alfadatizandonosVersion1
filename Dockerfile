@@ -23,9 +23,10 @@ RUN mkdir venv
 RUN mkdir log
 RUN mkdir /tmp/.ivy
 RUN mkdir /tmp/py
+RUN mkdir /.wdm
 RUN touch log/error.log
 RUN touch log/access.log
-RUN chown 1000110000 venv /tmp/py /tmp/.ivy log/error.log log/access.log
+RUN chown 1000110000 venv /tmp/py /tmp/.ivy log/error.log log/access.log /.wdm
 
 RUN apt install -y gettext libnss-wrapper
 
@@ -60,6 +61,6 @@ CMD envsubst < config.py.template > config.py && \
     --workers "$NUM_WORKERS" \
     --timeout "$TIMEOUT" \
     --keep-alive "$KEEP_ALIVE" \
-    #--capture-output\
+    --capture-output \
     --log-level debug \
     --error-logfile log/error.log --access-logfile log/access.log
