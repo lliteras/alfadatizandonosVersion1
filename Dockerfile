@@ -59,6 +59,7 @@ CMD envsubst < config.py.template > config.py && \
     gunicorn index:app -b 0.0.0.0:5000 \
     --workers "$NUM_WORKERS" \
     --timeout "$TIMEOUT" \
-    --keep-alive "$KEEP_ALIVE"\
-    --capture-output --log-level debug\
+    --keep-alive "$KEEP_ALIVE" \
+    #--capture-output\
+    --log-level debug \
     --error-logfile log/error.log --access-logfile log/access.log
