@@ -7,8 +7,16 @@
 	<div class="container d-flex" style="height: 90%">
 	    <div class="row align-self-center" style="width: 100%" >
 	     <div class="col">
-				<h1>Nueva fuente de datos</h1>
-				<span>Haga click en examinar o suelte un archivo (CSV o JSON) sobre el área marcada.</span>
+				<h1>Cargar una nueva fuente de datos</h1>
+				<p>(esta versión sólo permite trabajar con archivos de extensión .csv y .json)</p>
+				<ol>
+					<li>Seleccione 	el archivo a cargar. Desde "Examinar" podrá navegar en su explorador de archivos, o bien, puede usar la opción
+						de arrastrar y soltar en el cuadro.
+					</li>
+					<li>
+						Presione "Subir". Esta acción puede demorar varios minutos dependiendo del tamaño de su archivo (tamaño máximo: 100MB o 100.000KB)
+					</li>
+				</ol>
 			</div>
 			<div class="col">	
 				<form action="{{url_for('uploadFile')}}" method=post enctype=multipart/form-data style="height: 100%">
