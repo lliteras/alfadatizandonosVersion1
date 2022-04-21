@@ -27,7 +27,7 @@ from resources.profile import profile
 from resources.courses import course
 from resources.educational_establishments import extracting_data
 
-app.add_url_rule('/', 'home', home.dragAndDrop)
+app.add_url_rule('/', 'home', home.home)
 
 app.add_url_rule('/graphLine/<database>&<x_axie>&<acumulativeX>', 'graph_line', visualization.graphLine, methods=['GET'], defaults={'condition':None})
 app.add_url_rule('/graphLine/<database>&<x_axie>&<acumulativeX>&<condition>', 'graph_line', visualization.graphLine, methods=['GET'])

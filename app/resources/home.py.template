@@ -278,6 +278,11 @@ def detectType(xString):
 
 					return 'varchar(255)'
 
+def home():
+	if session:
+		return render_template('home/home.html')
+	else:
+		return redirect(url_for('loginForm'))
 
 def JSONRecursion(database, data, firstRow, sqlContext, spark, idTable, pos, posObject, objectName, dateFormat):
 
