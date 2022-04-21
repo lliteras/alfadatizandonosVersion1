@@ -26,11 +26,12 @@
               Fuentes de datos
             </a>
             <ul class="dropdown-menu" style="width: 200px;" aria-labelledby="navbarDropdown">
-              <li><a class="nav-link " aria-current="page" href="{{url_for('datasets_index_publics')}}">Datasets Públicos</a></li>
+              <li><a class="nav-link " aria-current="page" href="{{url_for('dragAndDrop')}}">Nueva fuente de datos</a></li>
+              <li><a class="nav-link " aria-current="page" href="{{url_for('datasets_index_publics')}}">Fuentes de datos Públicas</a></li>
 
-              <li><a class="nav-link " aria-current="page" href="{{url_for('datasets_index_protecteds')}}">Datasets Protegidos</a></li>
+              <li><a class="nav-link " aria-current="page" href="{{url_for('datasets_index_protecteds')}}">Fuentes de datos Protegidas</a></li>
             {% if session['actualRole']=='professor' %}
-              <li><a class="nav-link " aria-current="page" href="{{url_for('datasets_index_privates')}}">Mis Datasets</a></li>
+              <li><a class="nav-link " aria-current="page" href="{{url_for('datasets_index_privates')}}">Mis Fuentes de datos</a></li>
             {% endif %}
             </ul>
           </li>

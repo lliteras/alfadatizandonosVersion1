@@ -90,7 +90,7 @@ def course_add_dataset():
 
 		Course.add_dataset(datasetId, courseId)
 
-		flash('Dataset agregado correctamente', 'success')
+		flash('Fuente de datos agregada correctamente', 'success')
 		return view_course(courseId)
 	return redirect(url_for('home'))
 

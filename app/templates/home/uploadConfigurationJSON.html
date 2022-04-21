@@ -21,18 +21,18 @@
 	      	<form action="{{url_for('configurateUploadJSON')}}" method=post onsubmit="return validateform();">
 
 				<input type="hidden" name="filename" value="{{filename}}">
-				<h5 >ingrese el nombre del dataset: </h5>
+				<h5 >ingrese el nombre de la fuente de datos: </h5>
 				<input class="form-control" style=" display:inline-block; width:300px; align-self: center; " type="text" name="database" required>
 				<br/>
 				<br/>
 				
-				<h5>Estado del dataset:</h5>
+				<h5>Estado de la fuente de datos:</h5>
 				<select style="display: inline; width: 300px;" id="share" name="share" class="form-select" required>
 				  <option selected value="publico">Publico</option>
 				  <option value="protegido">Protegido</option>
 				  <option value="privado">Privado</option>
 				</select>
-				<button style="margin-Bottom: 3px" type="button" class="btn btn-sm btn-success" data-bs-toggle="popover" title="Campo de estado del dataset" data-bs-content="Público significa que todos los usuarios podran utilizar/acceder al dataset, Protegido significa que se brinda acceso a todos los usuarios que pertenezcan al mismo establecimiento educativo y Privado significa que solo el que sube el dataset podra acceder a el (a menos que sea compartido en un curso)">
+				<button style="margin-Bottom: 3px" type="button" class="btn btn-sm btn-success" data-bs-toggle="popover" title="Campo de estado de la fuente de datos" data-bs-content="Público significa que todos los usuarios podran utilizar/acceder a la fuente de datos, Protegido significa que se brinda acceso a todos los usuarios que pertenezcan al mismo establecimiento educativo y Privado significa que solo el que sube la fuente de datos podra acceder a el (a menos que sea compartido en un curso)">
 					<img class="imgBar" src="{{url_for('static', filename='info.svg') }}">
 				</button>
 				<br/>

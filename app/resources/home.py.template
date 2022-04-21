@@ -189,7 +189,7 @@ def configurateUploadJSON ():
 
 					JSONRecursion(database, data, firstRow, sqlContext, spark, objectTable['id'], pos+1, pos, firstRelationName, dateFormat)	
 
-					flash('Dataset cargado correctamente', 'info')
+					flash('Fuente de datos cargada correctamente', 'info')
 
 					return render_template('home/dragAndDrop.html')		
 
@@ -200,7 +200,7 @@ def configurateUploadJSON ():
 
 					if 'database \"'+database+'\" already exists' in exceptionString:
 
-						flash('Ya hay un dataset con ese nombre. Debe escribir otro nombre.', 'danger')
+						flash('Ya hay una fuente de datos con ese nombre. Debe escribir otro nombre.', 'danger')
 
 						return render_template('home/uploadConfigurationJSON.html', filename=fileName)
 
@@ -214,7 +214,7 @@ def configurateUploadJSON ():
 
 							return render_template('home/uploadConfigurationJSON.html', filename=fileName)
 						
-						flash('Lo sentimos, la carga del dataset ha fallado', 'danger')
+						flash('Lo sentimos, la carga de la fuente de datos ha fallado', 'danger')
 
 						return render_template('home/dragAndDrop.html')
 			
@@ -503,7 +503,7 @@ def configurateUploadCSV():
 						    .save()
 
 
-					flash('Dataset cargado correctamente', 'info')
+					flash('Fuente de datos cargada correctamente', 'info')
 
 					return render_template('home/dragAndDrop.html')		
 
@@ -514,7 +514,7 @@ def configurateUploadCSV():
 
 					if 'database \"'+database+'\" already exists' in exceptionString:
 
-						flash('Ya hay un dataset con ese nombre. Debe escribir otro nombre.', 'danger')
+						flash('Ya hay una fuente de datos con ese nombre. Debe escribir otro nombre.', 'danger')
 
 						return render_template('home/uploadConfiguration.html', filename=filename)
 
@@ -528,7 +528,7 @@ def configurateUploadCSV():
 
 							return render_template('home/uploadConfiguration.html', filename=fileName)
 						
-						flash('Lo sentimos, la carga del dataset ha fallado', 'danger')
+						flash('Lo sentimos, la carga de la fuente de datos ha fallado', 'danger')
 
 
 						return render_template('home/dragAndDrop.html')

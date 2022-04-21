@@ -2,7 +2,7 @@
 {% block header %}
 <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
 {% endblock%}
-{% block title %}Datasets{% endblock %}
+{% block title %}Ver curso{% endblock %}
 {% block content %}
 <div class="container">
 	<h1 align="center">{{course.coursename}}</h1>
@@ -56,13 +56,13 @@
 	<div id="datasetsTitle">
 		<img src="{{url_for('static', filename='expand_arrow.png') }}"
 			style="height: 25px; width: 25px; display:inline-block; margin-bottom: 10px; margin-right:25px">
-		<h2 style="display:inline-block;">Datasets</h2>
+		<h2 style="display:inline-block;">Fuentes de datos</h2>
 	</div>
 	<div id="datasetsSection">
 		<table class="table table-hover">
 			<thead>
-				<th>Nombre del dataset</th>
-				<th>Subido por</th>
+				<th>Nombre de la fuente de datos</th>
+				<th>Subida por</th>
 				<th>Acciones</th>
 			</thead>
 			<tbody id="datasetTable">
@@ -86,7 +86,7 @@
 		</table>
 		<div class="d-grid gap-2">
 			<button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Agregar
-				dataset</button>
+				fuente de datos</button>
 		</div>
 		<!-- Modal -->
 		<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
@@ -96,12 +96,12 @@
 
 					<form action="{{url_for('course_add_dataset')}}" id="formCondition" method=post>
 						<div class="modal-header">
-							<h5 class="modal-title" id="staticBackdropLabel">Elija el dataset a agregar</h5>
+							<h5 class="modal-title" id="staticBackdropLabel">Elija la fuente de datos a agregar</h5>
 							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 						</div>
 						<div class="modal-body">
 
-							<h5>Dataset a agregar:</h5>
+							<h5>Fuente de datos a agregar:</h5>
 							<select style="display: inline; width: 300px;" id="dataset" name="dataset"
 								class="form-select">
 								{% for dataset in datasetsToAdd %}
