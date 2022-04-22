@@ -1,3 +1,7 @@
 .course-row:hover {
   cursor: pointer;
 }
+
+.activity-row:hover {
+  cursor: pointer;
+}

@@ -54,7 +54,7 @@ def indexPublics(page, condition):
 
 		availablePages = getAvailablePages(page, maxPage)
 		
-		return render_template('datasets/index.html', datasets=datasets, nombre='Públicos', name='publics', availablePages=availablePages, maxPage=maxPage, actualPage=page, condition=condition)	
+		return render_template('datasets/index.html', datasets=datasets, nombre='Públicas', name='publics', availablePages=availablePages, maxPage=maxPage, actualPage=page, condition=condition)	
 
 	else: 
 
@@ -78,7 +78,7 @@ def indexProtecteds(page, condition):
 
 		availablePages = getAvailablePages(page, maxPage)
 		
-		return render_template('datasets/index.html', datasets=datasets, nombre='protegidos', name='protecteds', availablePages=availablePages, maxPage=maxPage, actualPage=page, condition=condition)
+		return render_template('datasets/index.html', datasets=datasets, nombre='protegidas', name='protecteds', availablePages=availablePages, maxPage=maxPage, actualPage=page, condition=condition)
 
 	else:
 
@@ -103,7 +103,7 @@ def indexPrivates(page, condition):
 
 		availablePages = getAvailablePages(page, maxPage)
 		
-		return render_template('datasets/index.html', datasets=datasets, nombre='privados', name='privates', availablePages=availablePages, maxPage=maxPage, actualPage=page, condition=condition)			
+		return render_template('datasets/index.html', datasets=datasets, nombre='Privadas', name='privates', availablePages=availablePages, maxPage=maxPage, actualPage=page, condition=condition)			
 	
 	else:
 

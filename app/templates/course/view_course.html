@@ -1,18 +1,21 @@
 {% extends "layout.html" %}
 {% block header %}
 <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='styles/courses.css') }}">
 {% endblock%}
 {% block title %}Ver curso{% endblock %}
 {% block content %}
 <div class="container">
 	<h1 align="center">{{course.coursename}}</h1>
+	<h2 align="cener">Información general</h2>
 	<hr>
 	<div id="alumnosTitle">
 		<img src="{{url_for('static', filename='expand_arrow.png') }}"
 			style="height: 25px; width: 25px; display:inline-block; margin-bottom: 10px; margin-right:25px">
-		<h2 style="display:inline-block;">Estudiantes inscriptos</h2>
+		<h2 style="display:inline-block;">Matriculación de estudiantes al curso</h2>
 	</div>
 	<div id="alumnosList">
+		<span>*Los alumnos deben registrarse previamente en la página principal</span>
 		<table class="table">
 			<thead>
 				<th>Nombre</th>
@@ -56,7 +59,7 @@
 	<div id="datasetsTitle">
 		<img src="{{url_for('static', filename='expand_arrow.png') }}"
 			style="height: 25px; width: 25px; display:inline-block; margin-bottom: 10px; margin-right:25px">
-		<h2 style="display:inline-block;">Fuentes de datos</h2>
+		<h2 style="display:inline-block;">Fuentes de datos disponibles para este curso</h2>
 	</div>
 	<div id="datasetsSection">
 		<table class="table table-hover">
@@ -126,7 +129,7 @@
 	<div id="activitiesTitle">
 		<img src="{{url_for('static', filename='expand_arrow.png') }}"
 			style="height: 25px; width: 25px; display:inline-block; margin-bottom: 10px; margin-right:25px">
-		<h2 style="display:inline-block;">Actividades</h2>
+		<h2 style="display:inline-block;">Actividades del curso</h2>
 	</div>
 	<div id="activitiesSection">
 		<table class="table table-hover">
@@ -137,7 +140,7 @@
 			</thead>
 			<tbody>
 				{% for activity in activities %}
-				<tr onclick="getActivity({{activity.id}});">
+				<tr class="activity-row" onclick="getActivity({{activity.id}});">
 					<td>{{activity.title}}</td>
 					<td>{{activity.description}}</td>
 					<td>
@@ -206,9 +209,6 @@
 							$.getJSON($SCRIPT_ROOT + "inviteUserToCourse/" + usuario_existe + "&" + {{ course.courseid }}, { }, function(data) {
 								usuario = data.result;
 								$('#alumnsTableBody').append("<tr><td>" + usuario[1] + ", " + usuario[0] + "</td><td>" + usuario[2] + "</td><td>" + usuario[3] + "</td></tr>")
-								$('#invitationError').removeClass('text-danger');
-								$('#invitationError').addClass('text-success');
-								$('#invitationError').append("Invitación enviada.");
 								var input = $('#usernameInput option[value="' + usuario_input + '"]').remove();
 								$('#usernameInput').val("");
 								if ($('#usernameInput > option').length === 1) {
