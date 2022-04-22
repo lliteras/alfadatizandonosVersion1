@@ -259,8 +259,16 @@ def api_twitter_search(stringToSearch, topQuantity, articles, prep, pron, conj, 
 	from webdriver_manager.firefox import GeckoDriverManager
 	import os
 	os.environ['MOZ_HEADLESS'] = '1'
+	os.environ['DISPLAY'] = ":1"
 
-	driver = webdriver.Firefox(executable_path=GeckoDriverManager().install())
+	from xvfbwrapper import Xvfb
+
+	vdisplay = Xvfb()
+	vdisplay.start()
+
+
+	fp = webdriver.FirefoxProfile('/.mozilla/firefox/profiles/my-profile')
+	driver = webdriver.Firefox(firefox_binary="/usr/bin/firefox-esr", executable_path=GeckoDriverManager().install(), firefox_profile=fp)
 
 
 	imageSocialGraph = get_screenshot_as_png(plot, driver=driver)
@@ -273,6 +281,8 @@ def api_twitter_search(stringToSearch, topQuantity, articles, prep, pron, conj, 
 
 	image = word_cloud(text)
 
+	vdisplay.stop()
+
 	return render_template(
 		'home/twitterGraphAndCloud.html',
 		image = image,
@@ -283,5 +293,3 @@ def api_twitter_search(stringToSearch, topQuantity, articles, prep, pron, conj, 
 		js_resources=INLINE.render_js(),
 		css_resources=INLINE.render_css(),
 	).encode(encoding='UTF-8')
-
-	aa		

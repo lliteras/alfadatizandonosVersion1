@@ -24,16 +24,23 @@ RUN mkdir log
 RUN mkdir /tmp/.ivy
 RUN mkdir /tmp/py
 RUN mkdir /.wdm
+RUN mkdir -p /.cache/dconf
+RUN mkdir -p /.mozilla/firefox/profiles/my-profile
+RUN mkdir -p /.cache/matplotlib
+RUN mkdir -p /.config/matplotlib
+RUN mkdir -p /tmp/.X11-unix
 RUN touch log/error.log
 RUN touch log/access.log
-RUN chown 1000110000 venv /tmp/py /tmp/.ivy log/error.log log/access.log /.wdm
+RUN touch geckodriver.log
+RUN chown -R 1000110000 venv /tmp/py /tmp/.ivy log/error.log log/access.log geckodriver.log /.wdm /.cache/dconf /.mozilla /.cache/matplotlib /.config/matplotlib
 
 RUN apt install -y gettext libnss-wrapper
 
 RUN apt install -y nano
 
-RUN mkdir -p /.config/matplotlib
-RUN chown 1000110000 /.config/matplotlib
+RUN apt-get update --fix-missing
+
+RUN apt install -y --no-install-recommends firefox-esr libpci-dev libegl-dev xvfb    
 
 USER 1000110000
 
@@ -51,7 +58,7 @@ COPY --chown=1000110000 passwd /tmp/
 
 #variables $DB_HOST, DB_NAME, $DB_USER, $DB_PASS
 
-CMD envsubst < config.py.template > config.py && \
+CMD Xvfb :1 & envsubst < config.py.template > config.py && \
     envsubst < resources/home.py.template > resources/home.py && \
     envsubst < resources/educational_establishments/extracting_data.py.template > resources/educational_establishments/extracting_data.py && \
     LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libnss_wrapper.so \

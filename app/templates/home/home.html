@@ -7,8 +7,12 @@ Alfadatizando
 {% endblock %}
 {% block content %}
 
-<div>
+<div class="home-container">
   <img class="home-img" src="{{url_for('static', filename='home.jpeg') }}"/>
-
+  {% if not session %}
+  <div class="home-buttons">
+    <a class="btn btn-primary" href="{{url_for('loginForm')}}">Iniciar sesión</a> o <a class="btn btn-secondary" href="{{url_for('registerForm')}}">Registrarse</a> 
+  </div>
+  {% endif %}
 </div>
 {% endblock %}
