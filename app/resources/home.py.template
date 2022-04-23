@@ -499,10 +499,11 @@ def configurateUploadCSV():
 						    .mode("append")\
 						    .save()
 
-
-					flash('Fuente de datos cargada correctamente', 'info')
-
-					return render_template('home/dragAndDrop.html')		
+					data = {
+							"message": 'Fuente de datos cargada correctamente.',
+							"status": 400
+						}
+					return  jsonify(data), 200	
 
 
 				except BaseException as e:
@@ -510,41 +511,45 @@ def configurateUploadCSV():
 					exceptionString = str(e)
 
 					if 'database \"'+database+'\" already exists' in exceptionString:
-
-						flash('Ya hay una fuente de datos con ese nombre. Debe escribir otro nombre.', 'danger')
-
-						return render_template('home/uploadConfiguration.html', filename=filename)
-
+						data = {
+							"message": 'Ya hay una fuente de datos con ese nombre. Debe escribir otro nombre.',
+							"status": 400
+						}
+						return  jsonify(data), 400
+						
 					else: 
 
 						Home.delete_dataset(database)
 
 						if 'wrong format of date in field' in exceptionString:
 
-							flash('El campo '+ exceptionString.replace('wrong format of date in field ','')+ ' tiene otro formato de fecha' , 'danger')
-
-							return render_template('home/uploadConfiguration.html', filename=fileName)
+							data = {
+								"message": 'El campo '+ exceptionString.replace('wrong format of date in field ','')+ ' tiene otro formato de fecha',
+								"status": 400
+							}
+							return  jsonify(data), 400
 						
-						flash('Lo sentimos, la carga de la fuente de datos ha fallado', 'danger')
-
-
-						return render_template('home/dragAndDrop.html')
-
-
+						data = {
+							"message": 'Lo sentimos, la carga de la fuente de datos ha fallado',
+							"status": 400
+						}
+						return  jsonify(data), 400
 			else:
-
-				flash('Por favor envie todos los datos solicitados', 'danger')
-
-				return render_template('home/uploadConfiguration.html', filename=filename)
+				data = {
+							"message": 'Por favor envie todos los datos solicitados',
+							"status": 400
+						}
+				return  jsonify(data), 400
 		
 		else:
-
-			flash('Error en el enviado del formulario', 'danger')
-
-			return render_template('home/dragAndDrop.html')
-
+					data = {
+							"message": 'Error en el enviado del formulario',
+							"status": 400
+						}
+					return  jsonify(data), 400
 	else:
-
-		flash('Debe estar logeado para realizar esta accion', 'danger')
-
-		return redirect(url_for('loginForm'))
+					data = {
+						"message": 'Debe estar logeado para realizar esta accion',
+						"status": 401
+					}
+					return  jsonify(data), 401
