@@ -1,6 +1,6 @@
 FROM python:3.7-bullseye
 
-RUN apt update && apt install -y libjpeg-dev zlib1g-dev \
+RUN apt-get update --fix-missing && apt install --no-install-recommends -y libjpeg-dev zlib1g-dev \
     libreadline-dev\
     libbz2-dev\
     libedit-dev\
@@ -8,7 +8,11 @@ RUN apt update && apt install -y libjpeg-dev zlib1g-dev \
     libssl-dev\
     libpq-dev\
     lzma-dev\
-    default-jdk
+    default-jdk\
+    gettext\
+    libnss-wrapper\
+    firefox-esr libpci-dev libegl-dev xvfb
+
 
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o run.sh
 RUN chmod 744 run.sh
@@ -19,28 +23,12 @@ WORKDIR /app
 
 COPY ./requirements.txt requirements.txt
 
-RUN mkdir venv  
-RUN mkdir log
-RUN mkdir /tmp/.ivy
-RUN mkdir /tmp/py
-RUN mkdir /.wdm
-RUN mkdir -p /.cache/dconf
-RUN mkdir -p /.mozilla/firefox/profiles/my-profile
-RUN mkdir -p /.cache/matplotlib
-RUN mkdir -p /.config/matplotlib
-RUN mkdir -p /tmp/.X11-unix
-RUN touch log/error.log
-RUN touch log/access.log
-RUN touch geckodriver.log
+RUN mkdir -p venv log /tmp/.ivy /tmp/py /.wdm /.cache/dconf /.mozilla/firefox/profiles/my-profile /.cache/matplotlib /.config/matplotlib /tmp/.X11-unix
+RUN touch log/error.log log/access.log geckodriver.log
+
+RUN chmod 1777 /tmp/.X11-unix
+
 RUN chown -R 1000110000 venv /tmp/py /tmp/.ivy log/error.log log/access.log geckodriver.log /.wdm /.cache/dconf /.mozilla /.cache/matplotlib /.config/matplotlib
-
-RUN apt install -y gettext libnss-wrapper
-
-RUN apt install -y nano
-
-RUN apt-get update --fix-missing
-
-RUN apt install -y --no-install-recommends firefox-esr libpci-dev libegl-dev xvfb    
 
 USER 1000110000
 
@@ -58,7 +46,10 @@ COPY --chown=1000110000 passwd /tmp/
 
 #variables $DB_HOST, DB_NAME, $DB_USER, $DB_PASS
 
-CMD Xvfb :1 & envsubst < config.py.template > config.py && \
+CMD DISPLAY=:1.0 \
+    && export DISPLAY \
+    && Xvfb :1 -screen 0 493x476x8 & \
+    envsubst < config.py.template > config.py && \
     envsubst < resources/home.py.template > resources/home.py && \
     envsubst < resources/educational_establishments/extracting_data.py.template > resources/educational_establishments/extracting_data.py && \
     LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libnss_wrapper.so \
