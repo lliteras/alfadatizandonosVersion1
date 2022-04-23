@@ -21,3 +21,16 @@
                            /* reset the font property */
   font: 16px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
+
+.carga {
+  height: 350px;
+}
+
+.margin-row {
+  margin-block-start: 50px;
+}
+
+
+.upload-form {
+  background-color: white;
+}
