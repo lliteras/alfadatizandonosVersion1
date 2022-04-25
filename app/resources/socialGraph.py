@@ -261,32 +261,24 @@ def api_twitter_search(stringToSearch, topQuantity, articles, prep, pron, conj, 
 	os.environ['MOZ_HEADLESS'] = '1'
 	os.environ['DISPLAY'] = ":1"
 
-	from xvfbwrapper import Xvfb
-
-	vdisplay = Xvfb()
-	vdisplay.start()
+	#fp = webdriver.FirefoxProfile('/.mozilla/firefox/profiles/my-profile')
+	#driver = webdriver.Firefox(firefox_binary="/usr/bin/firefox-esr", executable_path=GeckoDriverManager().install(), firefox_profile=fp)
 
 
-	fp = webdriver.FirefoxProfile('/.mozilla/firefox/profiles/my-profile')
-	driver = webdriver.Firefox(firefox_binary="/usr/bin/firefox-esr", executable_path=GeckoDriverManager().install(), firefox_profile=fp)
-
-
-	imageSocialGraph = get_screenshot_as_png(plot, driver=driver)
-	buffered = BytesIO()
-	imageSocialGraph.save(buffered, format = "PNG")
-	img_byte = buffered.getvalue() # bytes
-	imgBase64SocialGraph = base64.b64encode(img_byte).decode('ascii')
+	#imageSocialGraph = get_screenshot_as_png(plot, driver=driver)
+	#buffered = BytesIO()
+	#imageSocialGraph.save(buffered, format = "PNG")
+	#img_byte = buffered.getvalue() # bytes
+	#imgBase64SocialGraph = base64.b64encode(img_byte).decode('ascii')
 
 	script, div = components(plot)
 
 	image = word_cloud(text)
 
-	vdisplay.stop()
-
 	return render_template(
 		'home/twitterGraphAndCloud.html',
 		image = image,
-		imgBase64SocialGraph=imgBase64SocialGraph,
+		#imgBase64SocialGraph=imgBase64SocialGraph,
 
 		plot_script=script,
 		plot_div=div,
