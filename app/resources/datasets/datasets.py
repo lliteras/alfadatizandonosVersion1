@@ -1,4 +1,4 @@
-from flask import redirect, render_template, request, url_for, session, abort, flash
+from flask import redirect, render_template, request, url_for, session, abort, flash, jsonify
 from models.dataset import Dataset
 from models.visualization import Visualization
 from models.user import User
@@ -154,7 +154,9 @@ def show(Bid):
 					databaseStructure[column['name']] = column['type'] 
 
 			return render_template('datasets/show.html', columns = columns, database = database, databaseStructure = databaseStructure, canEdit = canEdit, establisments=establisments)
-
+		else: 
+			flash('No tiene acceso a esta base de datos', 'danger')
+			return redirect(url_for('dragAndDrop'))
 	else:
 
 		flash('Debe estar logeado para realizar esta accion', 'danger')

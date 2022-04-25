@@ -1,4 +1,4 @@
-from flask import redirect, render_template, request, url_for, session, abort, flash, jsonify
+from flask import redirect, render_template, request, url_for, session, abort, flash, jsonify, request
 from models.home import Home
 from models.user import User
 import os
@@ -29,8 +29,8 @@ dictionaryTypes = { 'int' : 'integer',
 
 def dragAndDrop():
 	if session:
-
-		return render_template('home/dragAndDrop.html')
+		args = request.args.to_dict()
+		return render_template('home/dragAndDrop.html', message=args["message"] if len(request.args) > 0 else False)
 	
 	else:
 

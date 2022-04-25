@@ -21,7 +21,7 @@ Subiendo fuente de datos
 
 				<br />
 				<h4>Por favor ingrese el nombre que tendra dicha columna (lo primero que se muestra es de ejemplo tomado
-					desde el archivo)</h4>
+					desde el archivo). Si no ingresa un nombre se elegirá uno por defecto.</h4>
 
 				<br />
 
@@ -220,12 +220,37 @@ Subiendo fuente de datos
 					method: 'POST',
 					dataType: "json",
 					type: 'POST',
+					parseError: true,
 				}).done(function (data) {
-					window.location.href = "{{url_for('dragAndDrop')}}"
-				}).fail(function (error) {
-					console.log(error)
+					const msg = data.message
+					window.location.href = `{{url_for('dragAndDrop')}}?message=${msg}`
+				}).fail(function (XHR, status) {
+					if (status === "timeout") {
+						const msg = "Por favor espere unos minutos e intente acceder a su fuente de datos desde el menú Fuentes de Datos"
+						$('#alerts').prepend(
+							'<div class="alert alert-warning alert-dismissible fade show" id="alert2" role="alert">' +
+							`<strong>${msg}</strong>` +
+							'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+							'</div>'
+						)
+						$("#alert2").fadeTo(10000, 500).slideUp(500, function () {
+							$("#alert2").slideUp(500);
+						});
+						return
+					}
+					const msg = JSON.parse(XHR.responseText).message
 					$("#column").removeClass("d-none")
 					$("#carga").addClass("d-none")
+
+					$('#alerts').prepend(
+						'<div class="alert alert-danger alert-dismissible fade show" id="alert2" role="alert">' +
+						`<strong>${msg}</strong>` +
+						'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+						'</div>'
+					)
+					$("#alert2").fadeTo(10000, 500).slideUp(500, function () {
+						$("#alert2").slideUp(500);
+					});
 				})
 			}
 
