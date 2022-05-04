@@ -46,10 +46,7 @@ COPY --chown=1000110000 passwd /tmp/
 
 #variables $DB_HOST, DB_NAME, $DB_USER, $DB_PASS
 
-CMD DISPLAY=:1.0 \
-    && export DISPLAY \
-    && Xvfb :1 -screen 0 493x476x8 & \
-    envsubst < config.py.template > config.py && \
+CMD envsubst < config.py.template > config.py && \
     envsubst < resources/home.py.template > resources/home.py && \
     envsubst < resources/educational_establishments/extracting_data.py.template > resources/educational_establishments/extracting_data.py && \
     LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libnss_wrapper.so \

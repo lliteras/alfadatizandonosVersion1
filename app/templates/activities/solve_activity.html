@@ -1,458 +1,501 @@
 {% extends "layout.html" %}
 {% block content %}
+
 <head>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"></script>
-  	<script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.5.0.js"></script>
 </head>
+
 <body>
 
 	<div class="container" style="min-height: 700px%;">
-				    <div style="min-height: 700px;" class="row align-items-start">
-				      	<div class="col">
-				        
-				      	</div>
-				      	<div style="background-color: #61A5C2; text-align:center; margin: auto;min-height: 700px !important;" class="col-12">
-				      		<div id="alertsActivity" style="z-index: 2000; position: fixed; width:70%"></div>
-					        <br/>
-					        <h5 style="display:inline-block;">Titulo: {{activity.statement_title}}</h5>
-					        <hr>
-					        <h5 style="display:inline-block;">Consigna: {{activity.statement}}</h5>
-					        <hr> 
-					        <h5 style="display:inline-block;">Fecha de fin: {{activity.end_date}}</h5>
-					        <hr>  
+		<div style="min-height: 700px;" class="row align-items-start">
+			<div class="col">
 
-					        {% if resolutions %}
+			</div>
+			<div style="background-color: #61A5C2; text-align:center; margin: auto;min-height: 700px !important;"
+				class="col-12">
+				<div id="alertsActivity" style="z-index: 2000; position: fixed; width:70%"></div>
+				<br />
+				<h5 style="display:inline-block;">Titulo: {{activity.statement_title}}</h5>
+				<hr>
+				<h5 style="display:inline-block;">Consigna: {{activity.statement}}</h5>
+				<hr>
+				<h5 style="display:inline-block;">Fecha de fin: {{activity.end_date}}</h5>
+				<hr>
 
-					        <table class="table" style="">
-					        	<thead>
-					        		<tr>
-					        			<th>Tipo de entrega</th>
-					        			<th>Fecha</th>
-					        			<th>Ver entrega</th>
-					        		</tr>
-					        	</thead>
-					        	<tbody>
-					        		{% for resolution in resolutions %}
-					        			<tr>
-					        			<td>
-					        				{% if resolution.resolution_type == 'plotter' %}
+				{% if resolutions %}
 
-					        					Graficador
+				<table class="table" style="">
+					<thead>
+						<tr>
+							<th>Tipo de entrega</th>
+							<th>Fecha</th>
+							<th>Ver entrega</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for resolution in resolutions %}
+						<tr>
+							<td>
+								{% if resolution.resolution_type == 'plotter' %}
 
-					        				{% else %}
+								Graficador
 
-					        					Grafo social
+								{% else %}
 
-					        				{% endif %}
+								Grafo social
 
-
-					        			</td>
-					        			<td>{{resolution.date_resolution}}</td>
-					        			<td>
-					        				<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#resolutionModal{{resolution.id_resolution}}">
-													  Ver
-													</button>
-					        			</td>
-
-					        			</tr>
-					        			{% if resolution.resolution_type == 'plotter' %}
-
-					        			<!-- Modal -->
-													<div class="modal fade" id="resolutionModal{{resolution.id_resolution}}" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true" >
-													  <div class="modal-dialog"  style="max-width: 80%; height: 1050px;" role="document">
-													    <div class="modal-content" style="height:1000">
-													      <div class="modal-header">        
-									        	        <h5 class="modal-title">Resolución</h5>
-													        	<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-													      </div>
-													      <div class="modal-body" style="width:100%; height:1050px">
-													      	<p class="text-start">Comentario:</p>
-													      	<div class="card">
-													      		<p class="text-start">{{resolution.commentary}}</p>
-													      	</div>
-													      	<hr>
-													      	<h3>Gráfico</h3>
-													      	<iframe id="iframe{{resolution.id_resolution}}" src="{{url_for('view_resolution_graph', resolutionId=resolution.id_resolution)}}" id="iframeResolution{{resolution.id_resolution}}" style="width:100%; height:800px;" scrolling="no" ></iframe>
-													        
-													      </div>
-													    </div>
-													  </div>
-													</div>
-													{% else %}
-
-													<!-- Modal -->
-													<div class="modal fade" id="resolutionModal{{resolution.id_resolution}}" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true" >
-													  <div class="modal-dialog"  style="max-width: 80%; height: 1700px;" role="document">
-													    <div class="modal-content" style="height:1700">
-
-													      <div class="modal-header">        
-									        	        <h5 class="modal-title">Resolución</h5>
-													        	<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-													      </div>
-													      <div class="modal-body" style="width:100%; height:1550px">
-													      	<p class="text-start">Comentario:</p>
-													      	<div class="card">
-													      		<p class="text-start">{{resolution.commentary}}</p>
-													      	</div>
-													      	<hr>
-													      	<h3>Grafo y Nube de palabras</h3>
-													      	<iframe id="iframe{{resolution.id_resolution}}" src="{{url_for('view_resolution_social_graph', resolutionId=resolution.id_resolution)}}" id="iframeResolution{{resolution.id_resolution}}" style="width:100%; height:1300px;" scrolling="no" ></iframe>
-													        
-													      </div>
-													    </div>
-													  </div>
-													</div>
+								{% endif %}
 
 
-													{% endif %}
+							</td>
+							<td>{{resolution.date_resolution}}</td>
+							<td>
+								<button type="button" class="btn btn-primary" data-bs-toggle="modal"
+									data-bs-target="#resolutionModal{{resolution.id_resolution}}">
+									Ver
+								</button>
+							</td>
+
+						</tr>
+						{% if resolution.resolution_type == 'plotter' %}
+
+						<!-- Modal -->
+						<div class="modal fade" id="resolutionModal{{resolution.id_resolution}}"
+							data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+							aria-hidden="true">
+							<div class="modal-dialog" style="max-width: 80%; height: 1050px;" role="document">
+								<div class="modal-content" style="height:1000">
+									<div class="modal-header">
+										<h5 class="modal-title">Resolución</h5>
+										<button type="button" class="btn-close" data-bs-dismiss="modal"
+											aria-label="Close"></button>
+									</div>
+									<div class="modal-body" style="width:100%; height:1050px">
+										<p class="text-start">Comentario:</p>
+										<div class="card">
+											<p class="text-start">{{resolution.commentary}}</p>
+										</div>
+										<hr>
+										<h3>Gráfico</h3>
+										<iframe id="iframe{{resolution.id_resolution}}"
+											src="{{url_for('view_resolution_graph', resolutionId=resolution.id_resolution)}}"
+											id="iframeResolution{{resolution.id_resolution}}"
+											style="width:100%; height:800px;" scrolling="no"></iframe>
+
+									</div>
+								</div>
+							</div>
+						</div>
+						{% else %}
+
+						<!-- Modal -->
+						<div class="modal fade" id="resolutionModal{{resolution.id_resolution}}"
+							data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+							aria-hidden="true">
+							<div class="modal-dialog" style="max-width: 80%; height: 1700px;" role="document">
+								<div class="modal-content" style="height:1700">
+
+									<div class="modal-header">
+										<h5 class="modal-title">Resolución</h5>
+										<button type="button" class="btn-close" data-bs-dismiss="modal"
+											aria-label="Close"></button>
+									</div>
+									<div class="modal-body" style="width:100%; height:1550px">
+										<p class="text-start">Comentario:</p>
+										<div class="card">
+											<p class="text-start">{{resolution.commentary}}</p>
+										</div>
+										<hr>
+										<h3>Grafo y Nube de palabras</h3>
+										<iframe id="iframe{{resolution.id_resolution}}"
+											src="{{url_for('view_resolution_social_graph', resolutionId=resolution.id_resolution)}}"
+											id="iframeResolution{{resolution.id_resolution}}"
+											style="width:100%; height:1300px;" scrolling="no"></iframe>
+
+									</div>
+								</div>
+							</div>
+						</div>
 
 
-					        		{% endfor%}
+						{% endif %}
 
 
-					        	</tbody>
-					        </table>	
+						{% endfor%}
 
-					        <br/>
-					        <hr>
 
-					        {% endif %}
+					</tbody>
+				</table>
 
-					        <div class="card " style="display: inline-block; width:750px; background-color:#89C2D9; border-width: 5px;">
-						        <h3 style="display:inline-block;">Realizar una entrega de la actividad</h3>
-						        <br/>
-						        <h5 style="display:inline-block;">Complete la actividad en alguna de las pestañas que aparecen a continuación, segun crea correspondiente para completar la consigna (Graficador/Grafo social). </h5>
-						        <br/>
-						        <h5 style="display:inline-block;">Agregue un comentario y oprima uno de los dos botones debajo del comentario para elegir que tipo de entrega quiere enviar.</h5>
-						        <br/>
-						        <div class="md-form" style="padding: 20px">
-							    	<label class="titulo-form" for="inputCommentary">Comentario</label>
-							    	<textarea class="md-textarea form-control" maxlength="256" name="inputCommentary" id="inputCommentary" rows="3"></textarea>
-						        </div>
-						        {% if plotterTab %}
-						        	<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-							          Enviar Gráfico
-							        </button>
-						        {% endif %}
-						        {% if socialGraph %}
-						        	<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop2">Enviar Grafo social</button>
-						        {% endif %}
-						        <br/>
-						        <br/>
-					        </div>
-					        <br/>
-					        <hr>
+				<br />
+				<hr>
 
-					        <h5 style="display:inline-block;">Área de realización de la actividad</h5>  
-					        <br/>
-					        <br/>
-				      	</div>
-				      
-				      	<div class="col">
-				        
-				      	</div>
-			    	</div>
-			    </div>	
+				{% endif %}
+				<h5 style="display:inline-block;">Área de realización de la actividad</h5>
+				<br />
+				<div style="height:105%; border: 10px solid #61A5C2 ">
+					<nav>
+						<div class="nav nav-tabs" style="padding-left: 260px;" id="nav-tab" role="tablist">
+							{% if plotterTab %}
+
+							<button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab"
+								data-bs-target="#nav-plotter" type="button" role="tab" aria-controls="nav-plotter"
+								aria-selected="false">Graficador</button>
+
+							{% endif %}
+
+
+							{% if socialGraph %}
+							<button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab"
+								data-bs-target="#nav-social" type="button" role="tab" aria-controls="nav-social"
+								aria-selected="false">Grafo social
+								(Twitter)</button>
+
+							{% endif %}
+
+							<button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab"
+								data-bs-target="#nav-social" type="button" role="tab" aria-controls="nav-entrega"
+								aria-selected="false">Entregar actividad</button>
+						</div>
+
+					</nav>
+					<div id="alertsActivity"></div>
+					<div class="tab-content" id="nav-tabContent" style="height:95.5%; width: 100%; ">
+
+						{% if plotterTab %}
+						<div class="tab-pane fade" id="nav-plotter" role="tabpanel" aria-labelledby="nav-profile-tab"
+							style="height:100%">
+							<iframe src="{{url_for('plotter', Bid=datasetId , activityId=activityId)}}"
+								id="iframePlotter" style="width:100%; height:101%"></iframe>
+						</div>
+
+						{% endif %}
+
+						{% if socialGraph %}
+						<div class="tab-pane fade" id="nav-social" role="tabpanel" aria-labelledby="nav-profile-tab"
+							style="height:100%">
+							<iframe src="{{url_for('twitter_search', noNav=1)}}" id="iframeGraph"
+								style="width:100%; height:100%"></iframe>
+						</div>
+						{% endif %}
+
+						<div class="tab-pane fade" id="nav-entrega" role="tabpanel" aria-labelledby="nav-profile-tab"
+							style="height:100%">
+							<div class="card "
+								style="display: inline-block; width:750px; background-color:#89C2D9; border-width: 5px;">
+								<h3 style="display:inline-block;">Realizar una entrega de la actividad</h3>
+								<br />
+								<h5 style="display:inline-block;">Complete la actividad en alguna de las pestañas que
+									aparecen a
+									continuación, segun crea correspondiente para completar la consigna
+									(Graficador/Grafo social).
+								</h5>
+								<br />
+								<h5 style="display:inline-block;">Agregue un comentario y oprima uno de los dos botones
+									debajo del
+									comentario para elegir que tipo de entrega quiere enviar.</h5>
+								<br />
+								<div class="md-form" style="padding: 20px">
+									<label class="titulo-form" for="inputCommentary">Comentario</label>
+									<textarea class="md-textarea form-control" maxlength="256" name="inputCommentary"
+										id="inputCommentary" rows="3"></textarea>
+								</div>
+								{% if plotterTab %}
+								<button type="button" class="btn btn-primary" data-bs-toggle="modal"
+									data-bs-target="#staticBackdrop">
+									Enviar Gráfico
+								</button>
+								{% endif %}
+								{% if socialGraph %}
+								<button type="button" class="btn btn-primary" data-bs-toggle="modal"
+									data-bs-target="#staticBackdrop2">Enviar Grafo social</button>
+								{% endif %}
+								<br />
+								<br />
+							</div>
+							<br />
+						</div>
+					</div>
+				</div>
+			</div>
+			<br />
+
+
+			<div class="col">
+
+			</div>
+		</div>
+	</div>
 	<div class="modal" id="staticBackdrop" tabindex="-1">
 		<div class="modal-dialog">
 			<div class="modal-content">
-			  <div class="modal-header">
-			    <h5 class="modal-title">Entrega</h5>
-			    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			  </div>
-			  <div class="modal-body">
-			    <p>¿Confirma realizar la entrega?</p>
-			  </div>
-			  <div class="modal-footer">
-			    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-			    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="sentResolutionPlotter()">Entregar</button>
-			  </div>
+				<div class="modal-header">
+					<h5 class="modal-title">Entrega</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<p>¿Confirma realizar la entrega?</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+					<button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+						onclick="sentResolutionPlotter()">Entregar</button>
+				</div>
 			</div>
 		</div>
 	</div>
 	<div class="modal" id="staticBackdrop2" tabindex="-1">
 		<div class="modal-dialog">
 			<div class="modal-content">
-			  <div class="modal-header">
-			    <h5 class="modal-title">Entrega</h5>
-			    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			  </div>
-			  <div class="modal-body">
-			    <p>¿Confirma realizar la entrega?</p>
-			  </div>
-			  <div class="modal-footer">
-			    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-			    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="sentResolutionSocialGraph()">Entregar</button>
-			  </div>
+				<div class="modal-header">
+					<h5 class="modal-title">Entrega</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<p>¿Confirma realizar la entrega?</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+					<button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+						onclick="sentResolutionSocialGraph()">Entregar</button>
+				</div>
 			</div>
 		</div>
 	</div>
 	<div class="modal" id="staticBackdrop3" tabindex="-1">
 		<div class="modal-dialog">
 			<div class="modal-content">
-			  <div class="modal-header">
-			    <h5 class="modal-title">Salir</h5>
-			    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			  </div>
-			  <div class="modal-body">
-			    <p>¿Confirma que quiere salir de la actividad? Perderá el progreso de la actividad que no haya enviado</p>
-			  </div>
-			  <div class="modal-footer">
-			    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-			    <a class="btn btn-danger"  href="{{url_for('activities')}}">Salir</a>
-			  </div>
+				<div class="modal-header">
+					<h5 class="modal-title">Salir</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<p>¿Confirma que quiere salir de la actividad? Perderá el progreso de la actividad que no haya
+						enviado</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+					<a class="btn btn-danger" href="{{url_for('activities')}}">Salir</a>
+				</div>
 			</div>
 		</div>
 	</div>
 
 
-	<div style="height:105%; border: 10px solid #61A5C2 ">
-		<nav >
-	      <div class="nav nav-tabs" style="padding-left: 260px;" id="nav-tab" role="tablist">
-	        {% if plotterTab %}
+	<script>
 
-	        	<button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-plotter" type="button" role="tab" aria-controls="nav-plotter" aria-selected="false">Graficador</button>
+		function sentResolutionPlotter() {
 
-	        {% endif %}
-	        
-	        
-	        {% if socialGraph %}
-	        	<button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-social" type="button" role="tab" aria-controls="nav-social" aria-selected="false">Grafo social (Twitter)</button>
-
-	        {% endif %}
-	        
-	      </div>
-
-	    </nav>
-	    <div id="alertsActivity"></div>
-	    <div class="tab-content" id="nav-tabContent" style="height:95.5%; width: 100%; ">
-	      	
-	      	{% if plotterTab %}
-	       		<div class="tab-pane fade" id="nav-plotter" role="tabpanel" aria-labelledby="nav-profile-tab" style="height:100%">
-	          		<iframe src="{{url_for('plotter', Bid=datasetId , activityId=activityId)}}" id="iframePlotter" style="width:100%; height:101%"></iframe>
-	      		</div>
-
-	        {% endif %}
-	     
-	      	{% if socialGraph %}
-	      		<div class="tab-pane fade" id="nav-social" role="tabpanel" aria-labelledby="nav-profile-tab" style="height:100%">
-		          	<iframe src="{{url_for('twitter_search', noNav=1)}}" id="iframeGraph" style="width:100%; height:100%"></iframe>
-		      	</div>  
-			{% endif %}
-	      
-    	</div>
-    </div>	
-
-<script>
-
-	function sentResolutionPlotter() {
-
-		var selection; 
-		var x_axis;
-        var y_axis;
-        var dispersion_x;
-		var dispersion_y;           
-		var cumulative;
-		var commentary = $('#inputCommentary').val(); 
-		var has_condition = false
-		var stringConditions = '';
+			var selection;
+			var x_axis;
+			var y_axis;
+			var dispersion_x;
+			var dispersion_y;
+			var cumulative;
+			var commentary = $('#inputCommentary').val();
+			var has_condition = false
+			var stringConditions = '';
 
 
-		if (!$("#iframePlotter").contents().find('input:radio[name="chart"]:checked').val()){
-			$('#alertsActivity').prepend(
-                '<div class="alert alert-danger alert-dismissible fade show" role="alert">'+
-                  '<strong>Por favor elija el tipo de grafico</strong>'+
-                  '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'+
-                '</div>'
-                )
+			if (!$("#iframePlotter").contents().find('input:radio[name="chart"]:checked').val()) {
+				$('#alertsActivity').prepend(
+					'<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+					'<strong>Por favor elija el tipo de grafico</strong>' +
+					'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+					'</div>'
+				)
 
-		}else{
+			} else {
 
 
 
 
-			var selection = $("#iframePlotter").contents().find('input:radio[name="chart"]:checked').val();
-			if ($("#iframePlotter").contents().find('#order-axi-x').children(0).length == 0){
-		        $('#alertsActivity').prepend(
-			        '<div class="alert alert-danger alert-dismissible fade show" role="alert">'+
-			          '<strong>Por favor elija una columna por la cual graficar</strong>'+
-			          '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'+
-			        '</div>'
-			        )
-		        return false
-	      	} else{
-	      		if ((selection == 'map' || selection == 'data_table') && $("#iframePlotter").contents().find('#order-axi-y').children(0).length == 0){
-	      			if (selection == 'data_table'){
-	      				$('#alertsActivity').prepend(
-			                '<div class="alert alert-danger alert-dismissible fade show" role="alert">'+
-			                  '<strong>Por favor elija una fila por la cual generar la tabla</strong>'+
-			                  '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'+
-			                '</div>'
-			                )
-	      			}
-	      			if (selection == 'map'){
-	      				$('#alertsActivity').prepend(
-			                '<div class="alert alert-danger alert-dismissible fade show" role="alert">'+
-			                  '<strong>Por favor elija una longitud por la cual graficar</strong>'+
-			                  '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'+
-			                '</div>'
-			                )
-	      			}
-
-
-	      		}else{
-
-	      			if ($("#iframePlotter").contents().find('#iframe').attr('src') == ""){
-
-	      				$('#alertsActivity').prepend(
-					        '<div class="alert alert-danger alert-dismissible fade show" role="alert">'+
-					          '<strong>Por favor genere el grafico (oprimir el boton de \"Generar gráfico\" en la pestaña gráfico) antes de eniar la entrega</strong>'+
-					          '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'+
-					        '</div>'
-					        )
-
-	      			}
-	      			else{
-
-		      				var x_axis = $("#iframePlotter").contents().find('#order-axi-x').children(0).children(0).prop('value');
-
-			            var y_axis = $("#iframePlotter").contents().find('#order-axi-y').children(0).children(0).prop('value');
-
-			            var dispersion_x =$("#iframePlotter").contents().find('#dispersionX').val().toString();                  
-
-			            var dispersion_y = $("#iframePlotter").contents().find('#dispersionY').val().toString();
-
-			            if ($("#iframePlotter").contents().find('#acumulativeXCheckBox').is(':checked')) {
-		              		var cumulative = true;
-			            }  
-			            else{
-		              		var cumulative = false;
-			            }
-
-			            var conditions = $("#iframePlotter").contents().find("#order-conditions");
-	          
-						//check if there are any conditions
-						if (conditions.children(0).length > 0) {
-
-							var has_condition = true
-
-							//loop through the conditions
-							$("#iframePlotter").contents().find('[name=condition]').each(function(index) {
-
-							  //add the condition and the separator "~~~"
-							  stringConditions = stringConditions + $(this).children(0)[2].value + '~~~';
-							});
-
-							//delete the last separator "~~~"
-							stringConditions = stringConditions.slice(0, -3);
-
-
+				var selection = $("#iframePlotter").contents().find('input:radio[name="chart"]:checked').val();
+				if ($("#iframePlotter").contents().find('#order-axi-x').children(0).length == 0) {
+					$('#alertsActivity').prepend(
+						'<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+						'<strong>Por favor elija una columna por la cual graficar</strong>' +
+						'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+						'</div>'
+					)
+					return false
+				} else {
+					if ((selection == 'map' || selection == 'data_table') && $("#iframePlotter").contents().find('#order-axi-y').children(0).length == 0) {
+						if (selection == 'data_table') {
+							$('#alertsActivity').prepend(
+								'<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+								'<strong>Por favor elija una fila por la cual generar la tabla</strong>' +
+								'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+								'</div>'
+							)
+						}
+						if (selection == 'map') {
+							$('#alertsActivity').prepend(
+								'<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+								'<strong>Por favor elija una longitud por la cual graficar</strong>' +
+								'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+								'</div>'
+							)
 						}
 
-						$.post("/addPlotterResolutionToActivity", {"selection": selection, "x_axis":x_axis, "y_axis":y_axis, "dispersion_x":dispersion_x, "dispersion_y":dispersion_y, "cumulative":cumulative, "has_condition":has_condition, "stringCondition":stringConditions, "datasetId":{{datasetId}}, "commentary":commentary, "activityId":{{activityId}}})
 
-						location.reload();
+					} else {
 
-					}
+						if ($("#iframePlotter").contents().find('#iframe').attr('src') == "") {
 
-	      		}
-	      	}
+							$('#alertsActivity').prepend(
+								'<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+								'<strong>Por favor genere el grafico (oprimir el boton de \"Generar gráfico\" en la pestaña gráfico) antes de eniar la entrega</strong>' +
+								'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+								'</div>'
+							)
+
+						}
+						else {
+
+							var x_axis = $("#iframePlotter").contents().find('#order-axi-x').children(0).children(0).prop('value');
+
+							var y_axis = $("#iframePlotter").contents().find('#order-axi-y').children(0).children(0).prop('value');
+
+							var dispersion_x = $("#iframePlotter").contents().find('#dispersionX').val().toString();
+
+							var dispersion_y = $("#iframePlotter").contents().find('#dispersionY').val().toString();
+
+							if ($("#iframePlotter").contents().find('#acumulativeXCheckBox').is(':checked')) {
+								var cumulative = true;
+							}
+							else {
+								var cumulative = false;
+							}
+
+							var conditions = $("#iframePlotter").contents().find("#order-conditions");
+
+							//check if there are any conditions
+							if (conditions.children(0).length > 0) {
+
+								var has_condition = true
+
+								//loop through the conditions
+								$("#iframePlotter").contents().find('[name=condition]').each(function (index) {
+
+									//add the condition and the separator "~~~"
+									stringConditions = stringConditions + $(this).children(0)[2].value + '~~~';
+								});
+
+								//delete the last separator "~~~"
+								stringConditions = stringConditions.slice(0, -3);
+
+
+							}
+
+							$.post("/addPlotterResolutionToActivity", { "selection": selection, "x_axis": x_axis, "y_axis": y_axis, "dispersion_x": dispersion_x, "dispersion_y": dispersion_y, "cumulative": cumulative, "has_condition": has_condition, "stringCondition": stringConditions, "datasetId": {{ datasetId }}, "commentary": commentary, "activityId": { { activityId } }
+					})
+
+					location.reload();
+
+				}
+
+			}
+		}
       	}
 
 	}
 
-	function sentResolutionSocialGraph() {
+		function sentResolutionSocialGraph() {
 
-		if (!$("#iframeGraph").contents().find('#searchString').val()){
-
-			$('#alertsActivity').prepend(
-			        '<div class="alert alert-danger alert-dismissible fade show" role="alert">'+
-			          '<strong>Por favor escriba una palabra por la cual buscar</strong>'+
-			          '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'+
-			        '</div>'
-			        )
-
-			return false
-
-		}else
-
-			if( $("#iframeGraph").contents().find('#iframe').attr('src') == "" ){
+			if (!$("#iframeGraph").contents().find('#searchString').val()) {
 
 				$('#alertsActivity').prepend(
-			        '<div class="alert alert-danger alert-dismissible fade show" role="alert">'+
-			          '<strong>Por favor realice la busqueda (oprimir el boton de buscar en la pestaña grafo social) antes de eniar la entrega</strong>'+
-			          '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'+
-			        '</div>'
-			        )
+					'<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+					'<strong>Por favor escriba una palabra por la cual buscar</strong>' +
+					'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+					'</div>'
+				)
 
-			}else{
-			
+				return false
 
-				var commentary = $('#inputCommentary').val(); 
+			} else
 
-				var searchString = $("#iframeGraph").contents().find('#searchString').val();
+				if ($("#iframeGraph").contents().find('#iframe').attr('src') == "") {
 
-				var quantityOfWords = $("#iframeGraph").contents().find('#quantity').val();
+					$('#alertsActivity').prepend(
+						'<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+						'<strong>Por favor realice la busqueda (oprimir el boton de buscar en la pestaña grafo social) antes de eniar la entrega</strong>' +
+						'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+						'</div>'
+					)
 
-				var plotterBase64 = $("#iframeGraph").contents().find('#iframe').contents().find('#plotterBase64').val();
-
-				var cloudBase64 = $("#iframeGraph").contents().find('#iframe').contents().find('#cloudBase64').val();				
-
-				var excludePrepositions = false;
-				var excludeArticles = false;
-				var excludePronouns = false;
-				var excludeConjunctions = false;
-				var excludeAdverbs = false;
-				var excludeVerbs = false;
-				var excludeLinks = false;
+				} else {
 
 
-				if ($("#iframeGraph").contents().find('#preposiciones').is(':checked')){
+					var commentary = $('#inputCommentary').val();
 
-					var excludePrepositions = true;
+					var searchString = $("#iframeGraph").contents().find('#searchString').val();
 
-				}
+					var quantityOfWords = $("#iframeGraph").contents().find('#quantity').val();
 
-				if ($("#iframeGraph").contents().find('#articulos').is(':checked')){
+					var plotterBase64 = $("#iframeGraph").contents().find('#iframe').contents().find('#plotterBase64').val();
 
-					var excludeArticles = true;
+					var cloudBase64 = $("#iframeGraph").contents().find('#iframe').contents().find('#cloudBase64').val();
 
-				}
+					var excludePrepositions = false;
+					var excludeArticles = false;
+					var excludePronouns = false;
+					var excludeConjunctions = false;
+					var excludeAdverbs = false;
+					var excludeVerbs = false;
+					var excludeLinks = false;
 
-				if ($("#iframeGraph").contents().find('#pronombres').is(':checked')){
 
-					var excludePronouns = true;
+					if ($("#iframeGraph").contents().find('#preposiciones').is(':checked')) {
 
-				}
+						var excludePrepositions = true;
 
-				if ($("#iframeGraph").contents().find('#conjunciones').is(':checked')){
+					}
 
-					var excludeConjunctions = true;
+					if ($("#iframeGraph").contents().find('#articulos').is(':checked')) {
 
-				}
+						var excludeArticles = true;
 
-				if ($("#iframeGraph").contents().find('#adverbios').is(':checked')){
+					}
 
-					var excludeAdverbs = true;
+					if ($("#iframeGraph").contents().find('#pronombres').is(':checked')) {
 
-				}
+						var excludePronouns = true;
 
-				if ($("#iframeGraph").contents().find('#conjugaciones').is(':checked')){
+					}
 
-					var excludeVerbs = true;
+					if ($("#iframeGraph").contents().find('#conjunciones').is(':checked')) {
 
-				}
+						var excludeConjunctions = true;
 
-				if ($("#iframeGraph").contents().find('#links').is(':checked')){
+					}
 
-					var excludeLinks = true;
+					if ($("#iframeGraph").contents().find('#adverbios').is(':checked')) {
 
-				}
+						var excludeAdverbs = true;
 
-				$.post("/addSocialGraphResolutionToActivity", {"searchString":searchString, "excludePrepositions":excludePrepositions, "excludeArticles":excludeArticles, "excludePronouns":excludePronouns, "excludeConjunctions":excludeConjunctions, "excludeAdverbs":excludeAdverbs, "excludeVerbs":excludeVerbs, "excludeLinks":excludeLinks, "quantityOfWords":quantityOfWords  ,"commentary":commentary, "activityId":{{activityId}}, "plotterBase64":plotterBase64, "cloudBase64":cloudBase64})
+					}
 
-				location.reload();
+					if ($("#iframeGraph").contents().find('#conjugaciones').is(':checked')) {
+
+						var excludeVerbs = true;
+
+					}
+
+					if ($("#iframeGraph").contents().find('#links').is(':checked')) {
+
+						var excludeLinks = true;
+
+					}
+
+					$.post("/addSocialGraphResolutionToActivity", { "searchString": searchString, "excludePrepositions": excludePrepositions, "excludeArticles": excludeArticles, "excludePronouns": excludePronouns, "excludeConjunctions": excludeConjunctions, "excludeAdverbs": excludeAdverbs, "excludeVerbs": excludeVerbs, "excludeLinks": excludeLinks, "quantityOfWords": quantityOfWords, "commentary": commentary, "activityId": {{ activityId }}, "plotterBase64": plotterBase64, "cloudBase64": cloudBase64
+		})
+
+		location.reload();
 
 			}
 
@@ -460,7 +503,7 @@
 
 
 
-</script>  
-</body>	
+	</script>
+</body>
 
 {% endblock %}
