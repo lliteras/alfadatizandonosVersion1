@@ -10,8 +10,7 @@ RUN apt-get update --fix-missing && apt install --no-install-recommends -y libjp
     lzma-dev\
     default-jdk\
     gettext\
-    libnss-wrapper\
-    firefox-esr libpci-dev libegl-dev xvfb
+    libnss-wrapper
 
 
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o run.sh
@@ -23,10 +22,8 @@ WORKDIR /app
 
 COPY ./requirements.txt requirements.txt
 
-RUN mkdir -p venv log /tmp/.ivy /tmp/py /.wdm /.cache/dconf /.mozilla/firefox/profiles/my-profile /.cache/matplotlib /.config/matplotlib /tmp/.X11-unix
+RUN mkdir -p venv log /tmp/.ivy /tmp/py /.wdm /.cache/dconf /.mozilla/firefox/profiles/my-profile /.cache/matplotlib /.config/matplotlib
 RUN touch log/error.log log/access.log geckodriver.log
-
-RUN chmod 1777 /tmp/.X11-unix
 
 RUN chown -R 1000110000 venv /tmp/py /tmp/.ivy log/error.log log/access.log geckodriver.log /.wdm /.cache/dconf /.mozilla /.cache/matplotlib /.config/matplotlib
 
