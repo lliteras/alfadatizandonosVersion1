@@ -141,14 +141,15 @@ Resolver actividad
 							{% if plotterTab %}
 
 							<button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-plotter"
-								type="button" role="tab" aria-controls="nav-plotter" aria-selected="true">Graficador</button>
+								type="button" role="tab" aria-controls="nav-plotter" aria-selected="true" onclick="clickTabPlotter('iframePlotter')">Graficador</button>
 
 							{% endif %}
 
 
 							{% if socialGraph %}
-							<button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-social"
-								type="button" role="tab" aria-controls="nav-social" aria-selected="{% if not plotterTab %}true{% else %}false{% endif %}">Grafo social
+							<button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-social"  onclick="clickTabPlotter('iframeGraph')"
+								type="button" role="tab" aria-controls="nav-social"
+								aria-selected="true">Grafo social
 								(Twitter)</button>
 
 							{% endif %}
@@ -165,16 +166,17 @@ Resolver actividad
 						<div class="tab-pane fade" id="nav-plotter" role="tabpanel" aria-labelledby="nav-profile-tab"
 							style="height:100%; width: 100%;">
 							<iframe src="{{url_for('plotter', Bid=datasetId , activityId=activityId)}}" id="iframePlotter"
-							onload="this.style.height=(this.contentWindow.document.body.scrollHeight+20)+'px';" style="width:inherit"></iframe>
+								onload="this.style.height=(this.contentWindow.document.body.scrollHeight+20)+'px';"
+								style="width:inherit"></iframe>
 						</div>
 
 						{% endif %}
 
 						{% if socialGraph %}
 						<div class="tab-pane fade" id="nav-social" role="tabpanel" aria-labelledby="nav-profile-tab"
-							style="width: 100%" >
-							<iframe src="{{url_for('twitter_search', noNav=1)}}" id="iframeGraph"
-								style="width:inherit" onload="this.style.height=(this.contentWindow.document.body.scrollHeight+20)+'px';" ></iframe>
+							style="width: 100%">
+							<iframe src="{{url_for('twitter_search', noNav=1)}}" id="iframeGraph" style="width:inherit"
+								onload="this.style.height=(this.contentWindow.document.body.scrollHeight+20)+'px';"></iframe>
 						</div>
 						{% endif %}
 
@@ -281,6 +283,11 @@ Resolver actividad
 
 
 	<script>
+
+		const clickTabPlotter = (id) => {
+			const iframe = document.getElementById(id)
+			iframe.style.height=(iframe.contentWindow.document.body.scrollHeight+20)+'px'
+		}
 
 		function sentResolutionPlotter() {
 
@@ -495,6 +502,7 @@ Resolver actividad
 			}
 
 	}
+
 
 
 
