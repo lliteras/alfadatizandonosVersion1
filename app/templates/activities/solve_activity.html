@@ -26,6 +26,25 @@ Resolver actividad
 		function showUpload() {
 			$("#archivo-respuestas").show()
 		}
+
+
+		function canvasToPdf(canvas) {
+			const page = new jsPDF('p', 'pt', 'a4');
+			const pWidth = page.internal.pageSize.width;
+			const srcWidth = canvas.scrollWidth;
+			const margin = 18;
+			const resizedCanvas = document.createElement("canvas");
+			const resizedContext = resizedCanvas.getContext("2d");
+
+			const width = (pWidth - margin * 2)
+			const height = width / srcWidth * canvas.scrollHeight
+			resizedCanvas.height = height;
+			resizedCanvas.width = width;
+			resizedContext.drawImage(canvas, 0, 0, width, height);
+			const imgData = resizedCanvas.toDataURL();
+			page.addImage(imgData, "JPEG", margin, margin)
+			page.save("download.pdf");
+		}
 	</script>
 </head>
 
@@ -189,6 +208,12 @@ Resolver actividad
 						{% if plotterTab %}
 						<div class="tab-pane fade" id="nav-plotter" role="tabpanel" aria-labelledby="nav-profile-tab"
 							style="height:100%; width: 100%;">
+							<button type="button" class="btn btn-primary" onclick="(function(){
+								const canvas = document.getElementById('iframePlotter').contentWindow.document.getElementById('iframe').contentWindow.document.getElementsByTagName('canvas')[0]
+								canvasToPdf(canvas)
+							})()">
+								Añadir a la respuesta
+							</button>
 							<iframe src="{{url_for('plotter', Bid=datasetId , activityId=activityId)}}" id="iframePlotter"
 								style="width:inherit; height: 150vh;"></iframe>
 						</div>
