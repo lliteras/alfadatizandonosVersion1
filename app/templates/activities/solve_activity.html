@@ -8,6 +8,25 @@ Resolver actividad
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css" rel="stylesheet">
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+	<script>
+		window.doc = new jsPDF();
+
+		function genPDF() {
+			window.doc.text(20, 20, 'Hello world!');
+			window.doc.text(20, 30, 'Línea 2');
+			window.doc.addPage();
+			window.doc.text(20, 20, 'Second page');
+		}
+
+		function savePDF() {
+			doc.save('Test.pdf');
+		}
+
+		function showUpload() {
+			$("#archivo-respuestas").show()
+		}
+	</script>
 </head>
 
 <body>
@@ -66,13 +85,15 @@ Resolver actividad
 						{% if resolution.resolution_type == 'plotter' %}
 
 						<!-- Modal -->
-						<div class="modal fade" id="resolutionModal{{resolution.id_resolution}}" data-bs-keyboard="false"
-							tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+						<div class="modal fade" id="resolutionModal{{resolution.id_resolution}}"
+							data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+							aria-hidden="true">
 							<div class="modal-dialog" style="max-width: 80%; height: 1050px;" role="document">
 								<div class="modal-content" style="height:1000">
 									<div class="modal-header">
 										<h5 class="modal-title">Resolución</h5>
-										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+										<button type="button" class="btn-close" data-bs-dismiss="modal"
+											aria-label="Close"></button>
 									</div>
 									<div class="modal-body" style="width:100%; height:1050px">
 										<p class="text-start">Comentario:</p>
@@ -83,8 +104,8 @@ Resolver actividad
 										<h3>Gráfico</h3>
 										<iframe id="iframe{{resolution.id_resolution}}"
 											src="{{url_for('view_resolution_graph', resolutionId=resolution.id_resolution)}}"
-											id="iframeResolution{{resolution.id_resolution}}" style="width:100%; height:800px;"
-											scrolling="no"></iframe>
+											id="iframeResolution{{resolution.id_resolution}}"
+											style="width:100%; height:800px;" scrolling="no"></iframe>
 
 									</div>
 								</div>
@@ -93,14 +114,16 @@ Resolver actividad
 						{% else %}
 
 						<!-- Modal -->
-						<div class="modal fade" id="resolutionModal{{resolution.id_resolution}}" data-bs-keyboard="false"
-							tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+						<div class="modal fade" id="resolutionModal{{resolution.id_resolution}}"
+							data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+							aria-hidden="true">
 							<div class="modal-dialog" style="max-width: 80%; height: 1700px;" role="document">
 								<div class="modal-content" style="height:1700">
 
 									<div class="modal-header">
 										<h5 class="modal-title">Resolución</h5>
-										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+										<button type="button" class="btn-close" data-bs-dismiss="modal"
+											aria-label="Close"></button>
 									</div>
 									<div class="modal-body" style="width:100%; height:1550px">
 										<p class="text-start">Comentario:</p>
@@ -111,8 +134,8 @@ Resolver actividad
 										<h3>Grafo y Nube de palabras</h3>
 										<iframe id="iframe{{resolution.id_resolution}}"
 											src="{{url_for('view_resolution_social_graph', resolutionId=resolution.id_resolution)}}"
-											id="iframeResolution{{resolution.id_resolution}}" style="width:100%; height:1300px;"
-											scrolling="no"></iframe>
+											id="iframeResolution{{resolution.id_resolution}}"
+											style="width:100%; height:1300px;" scrolling="no"></iframe>
 
 									</div>
 								</div>
@@ -140,8 +163,9 @@ Resolver actividad
 						<div class="nav nav-tabs" style="padding-left: 260px;" id="nav-tab" role="tablist">
 							{% if plotterTab %}
 
-							<button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-plotter"
-								type="button" role="tab" aria-controls="nav-plotter" aria-selected="true">Graficador</button>
+							<button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab"
+								data-bs-target="#nav-plotter" type="button" role="tab" aria-controls="nav-plotter"
+								aria-selected="true">Graficador</button>
 
 							{% endif %}
 
@@ -153,8 +177,9 @@ Resolver actividad
 
 							{% endif %}
 
-							<button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-entrega"
-								type="button" role="tab" aria-controls="nav-entrega" aria-selected="false">Entregar actividad</button>
+							<button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab"
+								data-bs-target="#nav-entrega" type="button" role="tab" aria-controls="nav-entrega"
+								aria-selected="false">Entregar actividad</button>
 						</div>
 
 					</nav>
@@ -189,24 +214,26 @@ Resolver actividad
 									(Graficador/Grafo social).
 								</h5>
 								<br />
-								<h5 style="display:inline-block;">Agregue un comentario y oprima uno de los dos botones
-									debajo del
-									comentario para elegir que tipo de entrega quiere enviar.</h5>
+								<h5 style="display:inline-block;">Agregue un comentario y presiona Guardar respuestas.
+									Después cargue el archivo resultante en Elegir archivo de respuestas.</h5>
 								<br />
 								<div class="md-form" style="padding: 20px">
 									<label class="titulo-form" for="inputCommentary">Comentario</label>
-									<textarea class="md-textarea form-control" maxlength="256" name="inputCommentary" id="inputCommentary"
-										rows="3"></textarea>
+									<textarea class="md-textarea form-control" maxlength="256" name="inputCommentary"
+										id="inputCommentary" rows="3"></textarea>
 								</div>
-								{% if plotterTab %}
-								<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-									Enviar Gráfico
+								<button type="button" class="btn btn-primary" onclick="(function() {savePDF(); showUpload()})()">
+									Guardar respuestas
 								</button>
-								{% endif %}
-								{% if socialGraph %}
-								<button type="button" class="btn btn-primary" data-bs-toggle="modal"
-									data-bs-target="#staticBackdrop2">Enviar Grafo social</button>
-								{% endif %}
+								
+								<div id="archivo-respuestas" style="display: none">
+									<p>Elegir archivo de respuestas:</p>
+									<input type="file" class="form-control form-control-md" name="file" />
+									<button type="button" class="btn btn-primary" data-bs-toggle="modal"
+										data-bs-target="#staticBackdrop">
+										Enviar actividad
+									</button>
+								</div>
 								<br />
 								<br />
 							</div>
@@ -236,7 +263,7 @@ Resolver actividad
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
 					<button type="button" class="btn btn-primary" data-bs-dismiss="modal"
-						onclick="sentResolutionPlotter()">Entregar</button>
+						onclick="savePDF()">Entregar</button>
 				</div>
 			</div>
 		</div>
@@ -254,7 +281,7 @@ Resolver actividad
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
 					<button type="button" class="btn btn-primary" data-bs-dismiss="modal"
-						onclick="sentResolutionSocialGraph()">Entregar</button>
+						onclick="genPDF()">Entregar</button>
 				</div>
 			</div>
 		</div>
