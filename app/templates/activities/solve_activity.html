@@ -9,8 +9,11 @@ Resolver actividad
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="https://code.jquery.com/jquery-3.5.0.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+	<script src="https://unpkg.com/jspdf-autotable"></script>
+	<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 	<script>
-		window.doc = new jsPDF();
+		applyPlugin(jsPDF)
+		window.doc = new jsPDF('p', 'pt', 'a4');
 
 		function genPDF() {
 			window.doc.text(20, 20, 'Hello world!');
@@ -29,8 +32,7 @@ Resolver actividad
 
 
 		function canvasToPdf(canvas) {
-			const page = new jsPDF('p', 'pt', 'a4');
-			const pWidth = page.internal.pageSize.width;
+			const pWidth = window.doc.internal.pageSize.width;
 			const srcWidth = canvas.scrollWidth;
 			const margin = 18;
 			const resizedCanvas = document.createElement("canvas");
@@ -42,8 +44,20 @@ Resolver actividad
 			resizedCanvas.width = width;
 			resizedContext.drawImage(canvas, 0, 0, width, height);
 			const imgData = resizedCanvas.toDataURL();
-			page.addImage(imgData, "JPEG", margin, margin)
-			page.save("download.pdf");
+			window.doc.addImage(imgData, "JPEG", margin, margin)
+			window.doc.addPage();
+		}
+
+		function imgToPdf(img) {
+			const margin = 18;
+			window.doc.addImage(img.getAttribute("src"), "JPEG", margin, margin)
+			window.doc.addPage();
+		}
+
+		function tableToPdf(table) {
+			html2canvas(table).then(function (canvas) {
+				canvasToPdf(canvas)
+			});
 		}
 	</script>
 </head>
@@ -209,8 +223,14 @@ Resolver actividad
 						<div class="tab-pane fade" id="nav-plotter" role="tabpanel" aria-labelledby="nav-profile-tab"
 							style="height:100%; width: 100%;">
 							<button type="button" class="btn btn-primary" onclick="(function(){
+								const table = document.getElementById('iframePlotter').contentWindow.document.getElementById('iframe').contentWindow.document.getElementsByClassName('bk-data-table')[0]
 								const canvas = document.getElementById('iframePlotter').contentWindow.document.getElementById('iframe').contentWindow.document.getElementsByTagName('canvas')[0]
-								canvasToPdf(canvas)
+								if(table) {
+									tableToPdf(table)
+								}
+								if(canvas) {
+									canvasToPdf(canvas)
+								}
 							})()">
 								Añadir a la respuesta
 							</button>
@@ -223,6 +243,16 @@ Resolver actividad
 						{% if socialGraph %}
 						<div class="tab-pane fade" id="nav-social" role="tabpanel" aria-labelledby="nav-profile-tab"
 							style="width: 100%">
+							<button type="button" class="btn btn-primary" onclick="(function(){
+								const canvas = document.getElementById('iframeGraph').contentWindow.document.getElementById('iframe').contentWindow.document.getElementsByTagName('canvas')[0]
+								if(canvas) {
+									canvasToPdf(canvas)
+								}
+								const img = document.getElementById('iframeGraph').contentWindow.document.getElementById('iframe').contentWindow.document.getElementById('nav-profile').getElementsByTagName('img')[0]
+								imgToPdf(img)
+							})()">
+								Añadir a la respuesta
+							</button>
 							<iframe src="{{url_for('twitter_search', noNav=1)}}" id="iframeGraph" style="width:inherit; height: 150vh"></iframe>
 						</div>
 						{% endif %}
