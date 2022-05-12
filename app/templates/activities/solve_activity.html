@@ -33,13 +33,13 @@ Resolver actividad
 
 		function canvasToPdf(canvas) {
 			const pWidth = window.doc.internal.pageSize.width;
-			const srcWidth = canvas.scrollWidth;
+			const srcWidth = canvas.width;
 			const margin = 18;
 			const resizedCanvas = document.createElement("canvas");
 			const resizedContext = resizedCanvas.getContext("2d");
 
 			const width = (pWidth - margin * 2)
-			const height = width / srcWidth * canvas.scrollHeight
+			const height = width / srcWidth * canvas.height
 			resizedCanvas.height = height;
 			resizedCanvas.width = width;
 			resizedContext.drawImage(canvas, 0, 0, width, height);
@@ -49,15 +49,53 @@ Resolver actividad
 		}
 
 		function imgToPdf(img) {
+			const pWidth = window.doc.internal.pageSize.width;
+			const srcWidth = img.width;
 			const margin = 18;
-			window.doc.addImage(img.getAttribute("src"), "JPEG", margin, margin)
+			const resizedCanvas = document.createElement("canvas");
+			const resizedContext = resizedCanvas.getContext("2d");
+
+			const width = (pWidth - margin * 2)
+			const height = width / srcWidth * img.height
+			resizedCanvas.height = height;
+			resizedCanvas.width = width;
+			resizedContext.drawImage(img, 0, 0, width, height);
+			const imgData = resizedCanvas.toDataURL();
+			window.doc.addImage(imgData, "JPEG", margin, margin)
 			window.doc.addPage();
 		}
 
 		function tableToPdf(table) {
-			html2canvas(table).then(function (canvas) {
-				canvasToPdf(canvas)
-			});
+			console.log("próximamente: exportar a excel")
+		}
+
+		function printParameters() {
+			var selection = $("#iframePlotter").contents().find('input:radio[name="chart"]:checked').val();
+			var x_axis = $("#iframePlotter").contents().find('#order-axi-x').children(0).children(0).prop('value');
+			var y_axis = $("#iframePlotter").contents().find('#order-axi-y').children(0).children(0).prop('value');
+			var dispersion_x = $("#iframePlotter").contents().find('#dispersionX').val().toString();
+			var dispersion_y = $("#iframePlotter").contents().find('#dispersionY').val().toString();
+			if ($("#iframePlotter").contents().find('#acumulativeXCheckBox').is(':checked')) {
+				var cumulative = true;
+			}
+			else {
+				var cumulative = false;
+			}
+			var conditions = $("#iframePlotter").contents().find("#order-conditions");
+			//check if there are any conditions
+			if (conditions.children(0).length > 0) {
+				var has_condition = true
+				//loop through the conditions
+				$("#iframePlotter").contents().find('[name=condition]').each(function (index) {
+					//add the condition and the separator "~~~"
+					stringConditions = stringConditions + $(this).children(0)[2].value + '~~~';
+				});
+
+				//delete the last separator "~~~"
+				stringConditions = stringConditions.slice(0, -3);
+
+				
+				//{ "selection": selection, "x_axis": x_axis, "y_axis": y_axis, "dispersion_x": dispersion_x, "dispersion_y": dispersion_y, "cumulative": cumulative, "has_condition": has_condition, "stringCondition": stringConditions, "datasetId": {{ datasetId }}
 		}
 	</script>
 </head>
@@ -230,6 +268,7 @@ Resolver actividad
 								}
 								if(canvas) {
 									canvasToPdf(canvas)
+									printParameters()
 								}
 							})()">
 								Añadir a la respuesta
