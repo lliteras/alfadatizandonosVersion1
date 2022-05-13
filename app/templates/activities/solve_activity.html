@@ -30,7 +30,6 @@ Resolver actividad
 			$("#archivo-respuestas").show()
 		}
 
-
 		function canvasToPdf(canvas) {
 			const pWidth = window.doc.internal.pageSize.width;
 			const srcWidth = canvas.width;
@@ -95,7 +94,22 @@ Resolver actividad
 				stringConditions = stringConditions.slice(0, -3);
 
 				
+
+				$("#nav-entrega").append("<div id='printingDiv' style='background-color: white;'></div>");
+				$("#printingDiv").after("<h2>Tipo de gráfico:</h2>");
+				$("#printingDiv").after(
+					selection
+				);
+				window.doc.addHTML(($("#printingDiv")), {pagesplit: true}, function() {
+					//height 0!
+					$("#printingDiv").remove();
+	      });
 				//{ "selection": selection, "x_axis": x_axis, "y_axis": y_axis, "dispersion_x": dispersion_x, "dispersion_y": dispersion_y, "cumulative": cumulative, "has_condition": has_condition, "stringCondition": stringConditions, "datasetId": {{ datasetId }}
+			}
+		}
+
+		function postResolution() {
+			$.post("/addPlotterResolutionToActivity", {"file": file, "commentary": commentary, "activityId": {{ activityId }}}).then(res => console.log(res))
 		}
 	</script>
 </head>
@@ -117,116 +131,6 @@ Resolver actividad
 				<hr>
 				<h5 style="display:inline-block;">Fecha de fin: {{activity.end_date}}</h5>
 				<hr>
-
-				{% if resolutions %}
-
-				<table class="table" style="">
-					<thead>
-						<tr>
-							<th>Tipo de entrega</th>
-							<th>Fecha</th>
-							<th>Ver entrega</th>
-						</tr>
-					</thead>
-					<tbody>
-						{% for resolution in resolutions %}
-						<tr>
-							<td>
-								{% if resolution.resolution_type == 'plotter' %}
-
-								Graficador
-
-								{% else %}
-
-								Grafo social
-
-								{% endif %}
-
-
-							</td>
-							<td>{{resolution.date_resolution}}</td>
-							<td>
-								<button type="button" class="btn btn-primary" data-bs-toggle="modal"
-									data-bs-target="#resolutionModal{{resolution.id_resolution}}">
-									Ver
-								</button>
-							</td>
-
-						</tr>
-						{% if resolution.resolution_type == 'plotter' %}
-
-						<!-- Modal -->
-						<div class="modal fade" id="resolutionModal{{resolution.id_resolution}}"
-							data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
-							aria-hidden="true">
-							<div class="modal-dialog" style="max-width: 80%; height: 1050px;" role="document">
-								<div class="modal-content" style="height:1000">
-									<div class="modal-header">
-										<h5 class="modal-title">Resolución</h5>
-										<button type="button" class="btn-close" data-bs-dismiss="modal"
-											aria-label="Close"></button>
-									</div>
-									<div class="modal-body" style="width:100%; height:1050px">
-										<p class="text-start">Comentario:</p>
-										<div class="card">
-											<p class="text-start">{{resolution.commentary}}</p>
-										</div>
-										<hr>
-										<h3>Gráfico</h3>
-										<iframe id="iframe{{resolution.id_resolution}}"
-											src="{{url_for('view_resolution_graph', resolutionId=resolution.id_resolution)}}"
-											id="iframeResolution{{resolution.id_resolution}}"
-											style="width:100%; height:800px;" scrolling="no"></iframe>
-
-									</div>
-								</div>
-							</div>
-						</div>
-						{% else %}
-
-						<!-- Modal -->
-						<div class="modal fade" id="resolutionModal{{resolution.id_resolution}}"
-							data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
-							aria-hidden="true">
-							<div class="modal-dialog" style="max-width: 80%; height: 1700px;" role="document">
-								<div class="modal-content" style="height:1700">
-
-									<div class="modal-header">
-										<h5 class="modal-title">Resolución</h5>
-										<button type="button" class="btn-close" data-bs-dismiss="modal"
-											aria-label="Close"></button>
-									</div>
-									<div class="modal-body" style="width:100%; height:1550px">
-										<p class="text-start">Comentario:</p>
-										<div class="card">
-											<p class="text-start">{{resolution.commentary}}</p>
-										</div>
-										<hr>
-										<h3>Grafo y Nube de palabras</h3>
-										<iframe id="iframe{{resolution.id_resolution}}"
-											src="{{url_for('view_resolution_social_graph', resolutionId=resolution.id_resolution)}}"
-											id="iframeResolution{{resolution.id_resolution}}"
-											style="width:100%; height:1300px;" scrolling="no"></iframe>
-
-									</div>
-								</div>
-							</div>
-						</div>
-
-
-						{% endif %}
-
-
-						{% endfor%}
-
-
-					</tbody>
-				</table>
-
-				<br />
-				<hr>
-
-				{% endif %}
 				<h5 style="display:inline-block;">Área de realización de la actividad</h5>
 				<br />
 				<div style="height:105%; border: 10px solid #61A5C2 ">
@@ -267,8 +171,8 @@ Resolver actividad
 									tableToPdf(table)
 								}
 								if(canvas) {
-									canvasToPdf(canvas)
 									printParameters()
+									canvasToPdf(canvas)
 								}
 							})()">
 								Añadir a la respuesta

@@ -91,37 +91,6 @@ class Activity(object):
 		return cursor.fetchone()[0]
 
 	@classmethod
-	def insert_resolution_plotter(cls, plotterResolutionFields, plotterResolutionFieldsValues):
-
-		con = get_db()
-
-		query = "INSERT INTO public.resolution_plotter("+plotterResolutionFields+") VALUES( "+plotterResolutionFieldsValues+") RETURNING id_resolution_plotter;"
-		cursor = con.cursor(cursor_factory = psycopg2.extras.DictCursor)
-		cursor.execute(query)
-
-		con.commit()
-
-
-
-		return cursor.fetchone()[0]
-
-	@classmethod
-	def insert_resolution_plotter_conditions(cls, stringConditions, resolution_plotter_id):
-
-		con = get_db()
-
-		query = "INSERT INTO public.resolution_plotter_conditions(id_resolution_plotter, condition) VALUES(%s, %s)"
-		cursor = con.cursor(cursor_factory = psycopg2.extras.DictCursor)
-		var = []
-		for condition in stringConditions.split(sep='~~~'):
-			var.append((str(resolution_plotter_id), condition))
-		cursor.executemany(query, var)
-
-		con.commit()
-
-		return None
-
-	@classmethod
 	def insert_resolution_social_graph(cls, resolution_id, searchString, excludePrepositions, excludeArticles, excludePronouns, excludeConjunctions, excludeAdverbs, excludeVerbs, excludeLinks, quantityOfWords, cloudBase64, plotterBase64):	
 
 		con = get_db()

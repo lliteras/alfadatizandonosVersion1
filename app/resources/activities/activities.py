@@ -142,59 +142,9 @@ def addPlotterResolutionToActivity():
 		resolutionType = 'plotter'
 		dateTimeNow = datetime.datetime.now()
 
+		Activity.inset_resolution(activityId, userId, resolutionType, dateTimeNow ,commentary)
 
-		resolution_id = Activity.inset_resolution(activityId, userId, resolutionType, dateTimeNow ,commentary)
-
-
-		
-		#Information of plotter resolution
-		y_axis = ''
-		stringCondition = ''
-
-		selection = request.form['selection']
-		x_axis = request.form['x_axis']
-
-		plotterResolutionFields='graph_type, x_axis'
-		plotterResolutionFieldsValues = '\''+selection + '\', \'' + x_axis
-
-
-		if request.form.get('y_axis'):
-
-			y_axis = request.form['y_axis']
-
-			plotterResolutionFields= plotterResolutionFields + ', y_axis'
-			plotterResolutionFieldsValues = plotterResolutionFieldsValues + '\', \'' + y_axis
-
-
-
-		dispersion_x = request.form['dispersion_x']
-		dispersion_y = request.form['dispersion_y']
-		cumulative = request.form['cumulative']
-		has_condition = request.form['has_condition']
-		datasetId = request.form['datasetId']	
-
-		plotterResolutionFields= plotterResolutionFields + ', dispersion_x, dispersion_y, cumulative, has_condition, id_dataset, id_resolution'
-		plotterResolutionFieldsValues = plotterResolutionFieldsValues + '\', \'' + dispersion_x
-		plotterResolutionFieldsValues = plotterResolutionFieldsValues + '\', \'' + dispersion_y
-		plotterResolutionFieldsValues = plotterResolutionFieldsValues + '\', \'' + str(cumulative)
-		plotterResolutionFieldsValues = plotterResolutionFieldsValues + '\', \'' + str(has_condition)
-		plotterResolutionFieldsValues = plotterResolutionFieldsValues + '\', \'' + str(datasetId)
-		plotterResolutionFieldsValues = plotterResolutionFieldsValues + '\', \'' + str(resolution_id)+'\''
-
-
-		plotter_resolution_id = Activity.insert_resolution_plotter(plotterResolutionFields, plotterResolutionFieldsValues)
-
-		
-
-		#Conditions
-		if has_condition:
-
-			stringCondition = request.form['stringCondition']
-
-			Activity.insert_resolution_plotter_conditions(stringCondition, plotter_resolution_id)
-
-
-
+		//request.form['file']
 	return ''
 
 def addSocialGraphResolutionToActivity():

@@ -8,7 +8,6 @@
 	<table class="table" style="">
     	<thead>
     		<tr>
-    			<th>Tipo de entrega</th>
     			<th>Fecha</th>
     			<th>Ver entrega</th>
     		</tr>
@@ -16,82 +15,14 @@
     	<tbody>
     		{% for resolution in resolutions %}
     			<tr>
-    			<td>
-    				{% if resolution.resolution_type == 'plotter' %}
-
-    					Gráfico
-
-    				{% else %}
-
-    					Grafo social
-
-    				{% endif %}
-
-
-    			</td>
     			<td>{{resolution.date_resolution}}</td>
     			<td>
     				<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#resolutionModal{{resolution.id_resolution}}">
-							  Ver
-							</button>
+							<a href="{{url_for('static', filename='uploads/{{resolution.filename}}') }}">Resolución</a>
+						</button>
     			</td>
-
     			</tr>
-    			{% if resolution.resolution_type == 'plotter' %}
-
-        			<!-- Modal -->
-					<div class="modal fade" id="resolutionModal{{resolution.id_resolution}}" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true" >
-					  <div class="modal-dialog"  style="max-width: 80%; height: 1050px;" role="document">
-					    <div class="modal-content" style="height:1000">
-					      <div class="modal-header">        
-	        	        <h5 class="modal-title">Resolución</h5>
-					        	<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-					      </div>
-					      <div class="modal-body" style="width:100%; height:1050px">
-					      	<p class="text-start">Comentario:</p>
-					      	<div class="card">
-					      		<p class="text-start">{{resolution.commentary}}</p>
-					      	</div>
-					      	<hr>
-					      	<h3>Gráfico</h3>
-					      	<iframe id="iframe{{resolution.id_resolution}}" src="{{url_for('view_resolution_graph', resolutionId=resolution.id_resolution)}}" id="iframeResolution{{resolution.id_resolution}}" style="width:100%; height:800px;" scrolling="no" ></iframe>
-					        
-					      </div>
-					    </div>
-					  </div>
-					</div>
-					{% else %}
-
-					<!-- Modal -->
-					<div class="modal fade" id="resolutionModal{{resolution.id_resolution}}" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true" >
-					  <div class="modal-dialog"  style="max-width: 80%; height: 1700px;" role="document">
-					    <div class="modal-content" style="height:1700">
-
-					      <div class="modal-header">        
-	        	        <h5 class="modal-title">Resolución</h5>
-					        	<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-					      </div>
-					      <div class="modal-body" style="width:100%; height:1550px">
-					      	<p class="text-start">Comentario:</p>
-					      	<div class="card">
-					      		<p class="text-start">{{resolution.commentary}}</p>
-					      	</div>
-					      	<hr>
-					      	<h3>Grafo y Nube de palabras</h3>
-					      	<iframe id="iframe{{resolution.id_resolution}}" src="{{url_for('view_resolution_social_graph', resolutionId=resolution.id_resolution)}}" id="iframeResolution{{resolution.id_resolution}}" style="width:100%; height:1300px;" scrolling="no" ></iframe>
-					        
-					      </div>
-					    </div>
-					  </div>
-					</div>
-
-
-				{% endif %}
-
-
     		{% endfor%}
-
-
     	</tbody>
     </table>	
 
