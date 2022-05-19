@@ -1,12 +1,15 @@
-from flask import redirect, render_template, request, url_for, session, abort, flash
+from flask import redirect, render_template, request, url_for, session, abort, flash, jsonify
 from db import get_db
 from models.activity import Activity
 from models.dataset import Dataset
 from models.course import Course
 from models.user import User
 from datetime import date
+from werkzeug.utils import secure_filename
+import os
 import datetime
 
+UPLOAD_FOLDER = 'static/uploads/resolutions'
 
 def activities():
 	if session['name']:
@@ -128,10 +131,14 @@ def solveActivity(id):
 		graphs = Activity.get_graph_of_activity_by_id(id)
 		plotterTab = len(graphs) != 0
 
+		user = User.get_information_of_user(session['id'])
 
-		return render_template('activities/solve_activity.html', activity=activity, activityId=id, datasetId=datasetId, socialGraph=socialGraph, plotterTab=plotterTab, resolutions=resolutions)
+		return render_template('activities/solve_activity.html', activity=activity, activityId=id, datasetId=datasetId, socialGraph=socialGraph, plotterTab=plotterTab, resolutions=resolutions, user=user)
 
-def addPlotterResolutionToActivity():
+def isPDF(filename):
+	return filename.split(".")[1] == "pdf"
+
+def addResolutionToActivity():
 
 	if request.method=="POST":
 
@@ -142,108 +149,22 @@ def addPlotterResolutionToActivity():
 		resolutionType = 'plotter'
 		dateTimeNow = datetime.datetime.now()
 
-		Activity.inset_resolution(activityId, userId, resolutionType, dateTimeNow ,commentary)
-
-		//request.form['file']
-	return ''
-
-def addSocialGraphResolutionToActivity():
-
-	if request.method=="POST":
-
-		#information of resolution
-		commentary = request.form['commentary']
-		activityId = request.form['activityId']
-		userId = session['id']
-		resolutionType = 'social graph'
-		dateTimeNow = datetime.datetime.now()
-
-		resolution_id = Activity.inset_resolution(activityId, userId, resolutionType, dateTimeNow ,commentary)
-
-		#Information of social graph resolution
-
-		searchString = request.form['searchString']
-		excludePrepositions = request.form['excludePrepositions']
-		excludeArticles = request.form['excludeArticles']
-		excludePronouns = request.form['excludePronouns']
-		excludeConjunctions = request.form['excludeConjunctions']
-		excludeAdverbs = request.form['excludeAdverbs']
-		excludeVerbs = request.form['excludeVerbs']
-		excludeLinks = request.form['excludeLinks']
-		quantityOfWords = request.form['quantityOfWords']
-		cloudBase64 = request.form['cloudBase64']
-		plotterBase64 = request.form['plotterBase64']
-
-		
-
-		Activity.insert_resolution_social_graph(resolution_id, searchString, excludePrepositions, excludeArticles, excludePronouns, excludeConjunctions, excludeAdverbs, excludeVerbs, excludeLinks, quantityOfWords, cloudBase64, plotterBase64)
-
-
-
-
-
-
-	return ''
-
-
-def viewResolutionGraph(resolutionId):
-
-	resolution = Activity.get_resolution(resolutionId)
-
-	plotterResolution = Activity.get_plotter_resolution(resolutionId)
-
-	dataset = Dataset.get_dataset(plotterResolution['id_dataset'])
-
-	datasetName = dataset['name']
-
-	plotterResolution['x_axis_to_show'] = plotterResolution['x_axis'].split('***')[len(plotterResolution['x_axis'].split('***'))-1] 
-
-	if plotterResolution['y_axis']:
-
-		plotterResolution['y_axis_to_show'] = plotterResolution['y_axis'].split('***')[len(plotterResolution['y_axis'].split('***'))-1] 
-
-	plotterResolutionConditions	= []
-
-	if plotterResolution['has_condition']:
-
-		plotterResolutionConditions = Activity.get_plotter_resolution_conditions(plotterResolution['id_resolution_plotter'])
-
-		for condition in plotterResolutionConditions:
-
-			stringConditionField = condition['condition']
-
-			stringCondition = ''
-
-			if ' >= ' in stringConditionField and ' <= ' in stringConditionField:
-
-				stringCondition =  stringConditionField.split('***')[1]
-
-				stringCondition = stringCondition.split(' and ')[0]
-
-				stringCondition = stringCondition + ' y ' + stringConditionField.split('***')[len(stringConditionField.split('***'))-1]
-
-				
-
-			else:
-
-				stringCondition	= stringConditionField.split('***')[len(stringConditionField.split('***'))-1]
-
-			condition['stringCondition'] = stringCondition	
-
-
-
-
-
-	return render_template('activities/view_resolution_graph.html', noNav=True, datasetName=datasetName, plotterResolution=plotterResolution, conditions=plotterResolutionConditions )
-
-def viewResolutionSocialGraph(resolutionId):
-
-	resolution = Activity.get_resolution(resolutionId)
-
-	socialGraphResolution = Activity.get_social_graph_resolution(resolutionId)
-
-	return render_template('activities/view_resolution_social_graph.html', noNav=True, resolution=resolution, socialGraph=socialGraphResolution)
-
+		file = request.files['file']
+		filename = secure_filename(file.filename)		
+		if file and isPDF(filename):
+				file.save(os.path.join(UPLOAD_FOLDER, filename))
+				Activity.inset_resolution(activityId, userId, resolutionType, dateTimeNow ,commentary)
+				data = {
+						"message": 'Respuesta cargada correctamente.',
+						"status": 200
+				}
+				return  jsonify(data), 200
+		else:
+			data = {
+						"message": 'Compruebe el archivo subido',
+						"status": 400
+				}
+			return  jsonify(data), 400
 
 def correct_activity_view(activity_id, user_id):
 	if session['id']:

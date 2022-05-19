@@ -81,13 +81,7 @@ app.add_url_rule('/activities/view_activity_data/<id>', 'view_activity_data', ac
 app.add_url_rule('/resolverActividad/<int:id>', 'resolverActividad', activities.solveActivity)
 
 
-app.add_url_rule('/addPlotterResolutionToActivity', 'add_plotter_resolution_to_activity', activities.addPlotterResolutionToActivity, methods=['POST'])
-app.add_url_rule('/addSocialGraphResolutionToActivity', 'add_social_graph_resolution_to_activity', activities.addSocialGraphResolutionToActivity, methods=['POST'])
-app.add_url_rule('/viewResolutionGraph/<int:resolutionId>', 'view_resolution_graph', activities.viewResolutionGraph, methods=['GET'])
-app.add_url_rule('/viewResolutionSocialGraph/<int:resolutionId>', 'view_resolution_social_graph', activities.viewResolutionSocialGraph, methods=['GET'])
-
-
-
+app.add_url_rule('/addResolutionToActivity', 'add_resolution_to_activity', activities.addResolutionToActivity, methods=['POST'])
 
 app.add_url_rule('/activities/correct/<activity_id>&<user_id>', 'correct_activity_view', activities.correct_activity_view)
 app.add_url_rule('/activities/viewCorrectedActivity/<activity_id>&<user_id>', 'view_corrected_activity', activities.viewCorrectedActivity)

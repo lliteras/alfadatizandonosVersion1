@@ -14,23 +14,61 @@ Resolver actividad
 	<script>
 		applyPlugin(jsPDF)
 		window.doc = new jsPDF('p', 'pt', 'a4');
+		window.doc.setFontSize('11');
+		createFrontPage()
 
-		function genPDF() {
-			window.doc.text(20, 20, 'Hello world!');
-			window.doc.text(20, 30, 'Línea 2');
-			window.doc.addPage();
-			window.doc.text(20, 20, 'Second page');
+		function createFrontPage() {
+			let logo = null;
+
+			getDataUri("{{url_for('static', filename='home.jpeg') }}", function(dataUri) {
+				let left = 40;
+				let top = 40;
+				const imgWidth = 400;
+				const imgHeight = 240;
+
+				window.doc.addImage(dataUri, 'PNG', left, top, imgWidth, imgHeight);
+				let lines = 20
+				window.doc.text(40, lines * 20, 'Estudiante: {{ session.name }} {{user.surname}}');
+				lines++
+				window.doc.text(40, lines * 20, 'Actividad: ' + '{{activity.statement_title}}');
+				lines++
+				window.doc.text(40, lines * 20, 'Consigna: ' + '{{activity.statement}}');
+				window.doc.addPage();
+
+			});
+
+			function getDataUri(url, cb)
+			{
+					var image = new Image();
+
+					image.onload = function () {
+							var canvas = document.createElement('canvas');
+							canvas.width = this.naturalWidth;
+							canvas.height = this.naturalHeight; 
+
+							canvas.getContext('2d').drawImage(this, 0, 0);
+
+							cb(canvas.toDataURL('image/jpeg'));
+					};
+
+					image.src = url
+				}
 		}
 
 		function savePDF() {
-			doc.save('Test.pdf');
+			var commentary = $('#inputCommentary').val();
+			let lines = 20
+			window.doc.text(40, lines * 20, 'Comentario');
+			lines++
+			window.doc.text(40, lines * 20, commentary);
+			doc.save('Respuestas.pdf');
 		}
 
 		function showUpload() {
 			$("#archivo-respuestas").show()
 		}
 
-		function canvasToPdf(canvas) {
+		function canvasToPdf(canvas, line) {
 			const pWidth = window.doc.internal.pageSize.width;
 			const srcWidth = canvas.width;
 			const margin = 18;
@@ -43,8 +81,7 @@ Resolver actividad
 			resizedCanvas.width = width;
 			resizedContext.drawImage(canvas, 0, 0, width, height);
 			const imgData = resizedCanvas.toDataURL();
-			window.doc.addImage(imgData, "JPEG", margin, margin)
-			window.doc.addPage();
+			window.doc.addImage(imgData, "JPEG", margin, margin + 20 * line)
 		}
 
 		function imgToPdf(img) {
@@ -68,9 +105,36 @@ Resolver actividad
 			console.log("próximamente: exportar a excel")
 		}
 
-		function printParameters() {
+		function tipo_grafico(selection) {
+			switch (selection) {
+				case "bar":
+					return "Barras"
+					break;
+				case "data table":
+					return "Tabla"
+					break
+				case "line":
+					return "Líneas"
+					break
+				case "pie":
+					return "Torta"
+					break
+				case "dot":
+					return "Puntos"
+					break
+				case "scatter":
+					return "Dispersión"
+					break
+				case "map":
+					return "Mapa"
+				default:
+					break;
+			}
+		}
+
+		function printPlotterParameters() {
 			var selection = $("#iframePlotter").contents().find('input:radio[name="chart"]:checked').val();
-			var x_axis = $("#iframePlotter").contents().find('#order-axi-x').children(0).children(0).prop('value');
+			var x_axis = $("#iframePlotter").contents().find('#order-axi-x').children(0).children(0).prop('value').split("***")[1];
 			var y_axis = $("#iframePlotter").contents().find('#order-axi-y').children(0).children(0).prop('value');
 			var dispersion_x = $("#iframePlotter").contents().find('#dispersionX').val().toString();
 			var dispersion_y = $("#iframePlotter").contents().find('#dispersionY').val().toString();
@@ -82,8 +146,10 @@ Resolver actividad
 			}
 			var conditions = $("#iframePlotter").contents().find("#order-conditions");
 			//check if there are any conditions
+			let stringConditions
+			let has_condition = false
 			if (conditions.children(0).length > 0) {
-				var has_condition = true
+				has_condition = true
 				//loop through the conditions
 				$("#iframePlotter").contents().find('[name=condition]').each(function (index) {
 					//add the condition and the separator "~~~"
@@ -92,24 +158,122 @@ Resolver actividad
 
 				//delete the last separator "~~~"
 				stringConditions = stringConditions.slice(0, -3);
-
-				
-
-				$("#nav-entrega").append("<div id='printingDiv' style='background-color: white;'></div>");
-				$("#printingDiv").after("<h2>Tipo de gráfico:</h2>");
-				$("#printingDiv").after(
-					selection
-				);
-				window.doc.addHTML(($("#printingDiv")), {pagesplit: true}, function() {
-					//height 0!
-					$("#printingDiv").remove();
-	      });
-				//{ "selection": selection, "x_axis": x_axis, "y_axis": y_axis, "dispersion_x": dispersion_x, "dispersion_y": dispersion_y, "cumulative": cumulative, "has_condition": has_condition, "stringCondition": stringConditions, "datasetId": {{ datasetId }}
 			}
+			let lines = 3;
+			window.doc.text(40, lines * 20, "Tipo de gráfico: " + tipo_grafico(selection))
+			lines++;
+			window.doc.text(40, lines * 20, "Eje x: " + x_axis)
+			lines++;
+			window.doc.text(40, lines * 20, "Eje y: " + (y_axis ? y_axis : "-"))
+			lines++;
+			window.doc.text(40, lines * 20, "Dispersión x: " + dispersion_x)
+			lines++
+			window.doc.text(40, lines * 20, "Dispersión y: " + dispersion_y)
+			lines++
+			window.doc.text(40, lines * 20, "Es acumulativo: " + (cumulative ? "Sí" : "No"))
+			lines++
+			window.doc.text(40, lines * 20, "Tiene condiciones: " + (has_condition ? "Sí" : "No"))
+			lines++
+			window.doc.text(40, lines * 20, "Condiciones: " + (has_condition ? stringConditions : "-"))
+			lines++
+			const dataset = document.getElementById('iframePlotter').contentWindow.document.getElementsByTagName("h1")[0].textContent
+			window.doc.text(40, lines * 20, "Fuente de datos: " + dataset + " (" + {{ datasetId }} + ")")
+
+			return lines
+		}
+
+		function printGraphParameters() {
+			var searchString = $("#iframeGraph").contents().find('#searchString').val();
+
+			var quantityOfWords = $("#iframeGraph").contents().find('#quantity').val();
+
+			var excludePrepositions = false;
+			var excludeArticles = false;
+			var excludePronouns = false;
+			var excludeConjunctions = false;
+			var excludeAdverbs = false;
+			var excludeVerbs = false;
+			var excludeLinks = false;
+
+
+			if ($("#iframeGraph").contents().find('#preposiciones').is(':checked')) {
+
+				var excludePrepositions = true;
+
+			}
+
+			if ($("#iframeGraph").contents().find('#articulos').is(':checked')) {
+
+				var excludeArticles = true;
+
+			}
+
+			if ($("#iframeGraph").contents().find('#pronombres').is(':checked')) {
+
+				var excludePronouns = true;
+
+			}
+
+			if ($("#iframeGraph").contents().find('#conjunciones').is(':checked')) {
+
+				var excludeConjunctions = true;
+
+			}
+
+			if ($("#iframeGraph").contents().find('#adverbios').is(':checked')) {
+
+				var excludeAdverbs = true;
+
+			}
+
+			if ($("#iframeGraph").contents().find('#conjugaciones').is(':checked')) {
+
+				var excludeVerbs = true;
+
+			}
+
+			if ($("#iframeGraph").contents().find('#links').is(':checked')) {
+
+				var excludeLinks = true;
+
+			}
+
+			let lines = 3;
+			window.doc.text(40, lines * 20, "Búsqueda: " + searchString)
+			lines++;
+			window.doc.text(40, lines * 20, "Cantidad de palabras: " + quantityOfWords)
+			lines++;
+			window.doc.text(40, lines * 20, "Excluir preposiciones: " + (excludePrepositions ? "Sí" : "No"))
+			lines++;
+			window.doc.text(40, lines * 20, "Excluir artículos: " + (excludeArticles ? "Sí" : "No"))
+			lines++;
+			window.doc.text(40, lines * 20, "Excluir pronombres: " + (excludePronouns ? "Sí" : "No"))
+			lines++;
+			window.doc.text(40, lines * 20, "Excluir conjunciones: " + (excludeConjunctions ? "Sí" : "No"))
+			lines++;
+			window.doc.text(40, lines * 20, "Excluir adverbios: " + (excludeAdverbs ? "Sí" : "No"))
+			lines++;
+			window.doc.text(40, lines * 20, "Excluir verbos comunes: " + (excludeVerbs ? "Sí" : "No"))
+			lines++;
+			window.doc.text(40, lines * 20, "Excluir links: " + (excludeLinks ? "Sí" : "No"))
+			lines++;
+			return lines
 		}
 
 		function postResolution() {
-			$.post("/addPlotterResolutionToActivity", {"file": file, "commentary": commentary, "activityId": {{ activityId }}}).then(res => console.log(res))
+			var commentary = $('#inputCommentary').val();
+			var file = $('#fileinput').prop('files')[0];
+			var formdata = new FormData();
+			formdata.append("file", file);
+			formdata.append("commentary", commentary);
+			formdata.append("activityId", {{ activityId }});
+			$.ajax({
+				url: "/addResolutionToActivity",
+				method: "POST",
+				processData: false,
+				data: formdata,
+				contentType: false
+			}).done(res => console.log(res)).fail(res => console.log(res))
 		}
 	</script>
 </head>
@@ -171,8 +335,9 @@ Resolver actividad
 									tableToPdf(table)
 								}
 								if(canvas) {
-									printParameters()
-									canvasToPdf(canvas)
+									const lines = printPlotterParameters()
+									canvasToPdf(canvas, lines)
+									window.doc.addPage();
 								}
 							})()">
 								Añadir a la respuesta
@@ -189,7 +354,9 @@ Resolver actividad
 							<button type="button" class="btn btn-primary" onclick="(function(){
 								const canvas = document.getElementById('iframeGraph').contentWindow.document.getElementById('iframe').contentWindow.document.getElementsByTagName('canvas')[0]
 								if(canvas) {
-									canvasToPdf(canvas)
+									const lines = printGraphParameters()
+									canvasToPdf(canvas, lines)
+									window.doc.addPage();
 								}
 								const img = document.getElementById('iframeGraph').contentWindow.document.getElementById('iframe').contentWindow.document.getElementById('nav-profile').getElementsByTagName('img')[0]
 								imgToPdf(img)
@@ -226,7 +393,7 @@ Resolver actividad
 								
 								<div id="archivo-respuestas" style="display: none">
 									<p>Elegir archivo de respuestas:</p>
-									<input type="file" class="form-control form-control-md" name="file" />
+									<input type="file" class="form-control form-control-md" id="fileinput" />
 									<button type="button" class="btn btn-primary" data-bs-toggle="modal"
 										data-bs-target="#staticBackdrop">
 										Enviar actividad
@@ -261,265 +428,11 @@ Resolver actividad
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
 					<button type="button" class="btn btn-primary" data-bs-dismiss="modal"
-						onclick="savePDF()">Entregar</button>
+						onclick="postResolution()">Entregar</button>
 				</div>
 			</div>
 		</div>
 	</div>
-	<div class="modal" id="staticBackdrop2" tabindex="-1">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title">Entrega</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-				</div>
-				<div class="modal-body">
-					<p>¿Confirma realizar la entrega?</p>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-					<button type="button" class="btn btn-primary" data-bs-dismiss="modal"
-						onclick="genPDF()">Entregar</button>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="modal" id="staticBackdrop3" tabindex="-1">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title">Salir</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-				</div>
-				<div class="modal-body">
-					<p>¿Confirma que quiere salir de la actividad? Perderá el progreso de la actividad que no haya
-						enviado</p>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-					<a class="btn btn-danger" href="{{url_for('activities')}}">Salir</a>
-				</div>
-			</div>
-		</div>
-	</div>
-
-
-	<script>
-		function sentResolutionPlotter() {
-
-			var selection;
-			var x_axis;
-			var y_axis;
-			var dispersion_x;
-			var dispersion_y;
-			var cumulative;
-			var commentary = $('#inputCommentary').val();
-			var has_condition = false
-			var stringConditions = '';
-
-
-			if (!$("#iframePlotter").contents().find('input:radio[name="chart"]:checked').val()) {
-				$('#alertsActivity').prepend(
-					'<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
-					'<strong>Por favor elija el tipo de grafico</strong>' +
-					'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
-					'</div>'
-				)
-
-			} else {
-
-
-
-
-				var selection = $("#iframePlotter").contents().find('input:radio[name="chart"]:checked').val();
-				if ($("#iframePlotter").contents().find('#order-axi-x').children(0).length == 0) {
-					$('#alertsActivity').prepend(
-						'<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
-						'<strong>Por favor elija una columna por la cual graficar</strong>' +
-						'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
-						'</div>'
-					)
-					return false
-				} else {
-					if ((selection == 'map' || selection == 'data_table') && $("#iframePlotter").contents().find('#order-axi-y').children(0).length == 0) {
-						if (selection == 'data_table') {
-							$('#alertsActivity').prepend(
-								'<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
-								'<strong>Por favor elija una fila por la cual generar la tabla</strong>' +
-								'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
-								'</div>'
-							)
-						}
-						if (selection == 'map') {
-							$('#alertsActivity').prepend(
-								'<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
-								'<strong>Por favor elija una longitud por la cual graficar</strong>' +
-								'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
-								'</div>'
-							)
-						}
-
-
-					} else {
-
-						if ($("#iframePlotter").contents().find('#iframe').attr('src') == "") {
-
-							$('#alertsActivity').prepend(
-								'<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
-								'<strong>Por favor genere el grafico (oprimir el boton de \"Generar gráfico\" en la pestaña gráfico) antes de eniar la entrega</strong>' +
-								'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
-								'</div>'
-							)
-
-						}
-						else {
-
-							var x_axis = $("#iframePlotter").contents().find('#order-axi-x').children(0).children(0).prop('value');
-
-							var y_axis = $("#iframePlotter").contents().find('#order-axi-y').children(0).children(0).prop('value');
-
-							var dispersion_x = $("#iframePlotter").contents().find('#dispersionX').val().toString();
-
-							var dispersion_y = $("#iframePlotter").contents().find('#dispersionY').val().toString();
-
-							if ($("#iframePlotter").contents().find('#acumulativeXCheckBox').is(':checked')) {
-								var cumulative = true;
-							}
-							else {
-								var cumulative = false;
-							}
-
-							var conditions = $("#iframePlotter").contents().find("#order-conditions");
-
-							//check if there are any conditions
-							if (conditions.children(0).length > 0) {
-
-								var has_condition = true
-
-								//loop through the conditions
-								$("#iframePlotter").contents().find('[name=condition]').each(function (index) {
-
-									//add the condition and the separator "~~~"
-									stringConditions = stringConditions + $(this).children(0)[2].value + '~~~';
-								});
-
-								//delete the last separator "~~~"
-								stringConditions = stringConditions.slice(0, -3);
-
-
-							}
-
-							$.post("/addPlotterResolutionToActivity", { "selection": selection, "x_axis": x_axis, "y_axis": y_axis, "dispersion_x": dispersion_x, "dispersion_y": dispersion_y, "cumulative": cumulative, "has_condition": has_condition, "stringCondition": stringConditions, "datasetId": {{ datasetId }}, "commentary": commentary, "activityId": {{ activityId }}
-					})
-
-					location.reload();
-
-				}
-
-			}
-		}
-      	}
-
-	}
-
-		function sentResolutionSocialGraph() {
-
-			if (!$("#iframeGraph").contents().find('#searchString').val()) {
-
-				$('#alertsActivity').prepend(
-					'<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
-					'<strong>Por favor escriba una palabra por la cual buscar</strong>' +
-					'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
-					'</div>'
-				)
-
-				return false
-
-			} else
-
-				if ($("#iframeGraph").contents().find('#iframe').attr('src') == "") {
-
-					$('#alertsActivity').prepend(
-						'<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
-						'<strong>Por favor realice la busqueda (oprimir el boton de buscar en la pestaña grafo social) antes de eniar la entrega</strong>' +
-						'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
-						'</div>'
-					)
-
-				} else {
-
-
-					var commentary = $('#inputCommentary').val();
-
-					var searchString = $("#iframeGraph").contents().find('#searchString').val();
-
-					var quantityOfWords = $("#iframeGraph").contents().find('#quantity').val();
-
-					var plotterBase64 = $("#iframeGraph").contents().find('#iframe').contents().find('#plotterBase64').val();
-
-					var cloudBase64 = $("#iframeGraph").contents().find('#iframe').contents().find('#cloudBase64').val();
-
-					var excludePrepositions = false;
-					var excludeArticles = false;
-					var excludePronouns = false;
-					var excludeConjunctions = false;
-					var excludeAdverbs = false;
-					var excludeVerbs = false;
-					var excludeLinks = false;
-
-
-					if ($("#iframeGraph").contents().find('#preposiciones').is(':checked')) {
-
-						var excludePrepositions = true;
-
-					}
-
-					if ($("#iframeGraph").contents().find('#articulos').is(':checked')) {
-
-						var excludeArticles = true;
-
-					}
-
-					if ($("#iframeGraph").contents().find('#pronombres').is(':checked')) {
-
-						var excludePronouns = true;
-
-					}
-
-					if ($("#iframeGraph").contents().find('#conjunciones').is(':checked')) {
-
-						var excludeConjunctions = true;
-
-					}
-
-					if ($("#iframeGraph").contents().find('#adverbios').is(':checked')) {
-
-						var excludeAdverbs = true;
-
-					}
-
-					if ($("#iframeGraph").contents().find('#conjugaciones').is(':checked')) {
-
-						var excludeVerbs = true;
-
-					}
-
-					if ($("#iframeGraph").contents().find('#links').is(':checked')) {
-
-						var excludeLinks = true;
-
-					}
-
-					$.post("/addSocialGraphResolutionToActivity", { "searchString": searchString, "excludePrepositions": excludePrepositions, "excludeArticles": excludeArticles, "excludePronouns": excludePronouns, "excludeConjunctions": excludeConjunctions, "excludeAdverbs": excludeAdverbs, "excludeVerbs": excludeVerbs, "excludeLinks": excludeLinks, "quantityOfWords": quantityOfWords, "commentary": commentary, "activityId": {{ activityId }}, "plotterBase64": plotterBase64, "cloudBase64": cloudBase64
-		})
-
-		location.reload();
-
-			}
-
-	}
-
-	</script>
 </body>
 
 {% endblock %}
