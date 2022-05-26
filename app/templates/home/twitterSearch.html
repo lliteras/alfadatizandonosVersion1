@@ -74,7 +74,7 @@
         <div class="d-flex">
           <div class="form-check form-switch">
             <input class="form-check-input" type="checkbox" id="preposiciones">
-            <label class="form-check-label" for="preposiciones">Preposiciones</label>
+            <label class="form-check-label" for="preposiciones">Preposiciones (a, ante bajo...)</label>
           </div>
         </div>
         <div class="d-flex">
@@ -117,6 +117,17 @@
         </div>
       </div>
       <div class="col-sm">
+        <div class="d-flex">
+          <button class="btn btn-primary" onclick='(function(){
+            document.getElementById("preposiciones").checked = true
+            document.getElementById("articulos").checked = true
+            document.getElementById("pronombres").checked = true
+            document.getElementById("conjunciones").checked = true
+            document.getElementById("adverbios").checked = true
+            document.getElementById("conjugaciones").checked = true
+            document.getElementById("links").checked = true
+          })()'>Seleccionar todo</button>
+        </div>
       </div>
     </div>
   </div>
@@ -141,13 +152,7 @@
     
     $('#modalExplanation').modal('toggle');
 
-
-    
-
-
-
   });
-
 
   function GenerateChart() {
     //iframe
