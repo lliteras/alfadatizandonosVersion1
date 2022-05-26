@@ -18,7 +18,7 @@
     			<td>{{resolution.date_resolution}}</td>
     			<td>
     				<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#resolutionModal{{resolution.id_resolution}}">
-							<a href="{{url_for('static', filename='uploads/{{resolution.filename}}') }}">Resolución</a>
+							<a href="{{url_for('static', filename='uploads/resolutions/resolution_' + (resolution.id_resolution | string) + '.pdf' ) }}">Resolución</a>
 						</button>
     			</td>
     			</tr>

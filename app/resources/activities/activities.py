@@ -1,4 +1,5 @@
 from flask import redirect, render_template, request, url_for, session, abort, flash, jsonify
+from sqlalchemy import null
 from db import get_db
 from models.activity import Activity
 from models.dataset import Dataset
@@ -148,17 +149,31 @@ def addResolutionToActivity():
 		userId = session['id']
 		resolutionType = 'plotter'
 		dateTimeNow = datetime.datetime.now()
-
-		file = request.files['file']
-		filename = secure_filename(file.filename)		
-		if file and isPDF(filename):
-				file.save(os.path.join(UPLOAD_FOLDER, filename))
-				Activity.inset_resolution(activityId, userId, resolutionType, dateTimeNow ,commentary)
-				data = {
-						"message": 'Respuesta cargada correctamente.',
-						"status": 200
+		try:
+			file = request.files.get('file')
+		except KeyError:
+			data = {
+						"message": 'Compruebe el archivo subido',
+						"status": 400
 				}
-				return  jsonify(data), 200
+			return  jsonify(data), 400
+			
+		if file:
+				filename = secure_filename(file.filename)		
+				if isPDF(filename):
+					id = Activity.inset_resolution(activityId, userId, resolutionType, dateTimeNow ,commentary)
+					file.save(os.path.join(UPLOAD_FOLDER, "resolution_" + str(id) + 'pdf'))
+					data = {
+							"message": 'Respuesta cargada correctamente.',
+							"status": 200
+					}
+					return  jsonify(data), 200
+				else:
+					data = {
+								"message": 'Compruebe el archivo subido',
+								"status": 400
+						}
+					return  jsonify(data), 400
 		else:
 			data = {
 						"message": 'Compruebe el archivo subido',

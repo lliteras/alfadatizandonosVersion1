@@ -273,7 +273,19 @@ Resolver actividad
 				processData: false,
 				data: formdata,
 				contentType: false
-			}).done(res => console.log(res)).fail(res => console.log(res))
+			}).done(res => {
+				console.log(res)
+				$("#flashes").append('<div class="alert alert-success alert-dismissible fade show" id="alert" style="margin: auto; width: 60%; " role="alert">' +
+					res.message +
+          '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'+
+          '</div>')
+			})
+			.fail(res => {
+				$("#flashes").append('<div class="alert alert-danger alert-dismissible fade show" id="alert" style="margin: auto; width: 60%; " role="alert">' +
+					JSON.parse(res.responseText).message +
+          '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'+
+          '</div>')
+			})
 		}
 	</script>
 </head>
@@ -282,6 +294,7 @@ Resolver actividad
 
 	<div class="container" style="min-height: 700px%;">
 		<div style="min-height: 700px;" class="row align-items-start">
+			<div id="flashes"></div>
 			<div class="col">
 
 			</div>
