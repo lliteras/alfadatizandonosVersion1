@@ -59,8 +59,8 @@
 		      <td name="usuario{{user.id}}">
 		      	{% if session['actualRole']=='superadmin' %}
 		      	<input class="form-check-input" type="checkbox" onclick="validate(1, {{user.id}});" {% if 1 in roles[user.id]  %} checked {% endif %} id="role1_{{user.id}}">
+						{% endif %}
 		      	<label for="role1">Admin</label>
-		      	{% endif %}
 		      	<input class="form-check-input" type="checkbox" onclick="validate(2, {{user.id}});" {% if 2 in roles[user.id] %} checked {% endif %} id="role2_{{user.id}}">
 		      	<label for="role1">Profesor</label>
 		      	<input class="form-check-input" type="checkbox" onclick="validate(3, {{user.id}});" {% if 3 in roles[user.id] %} checked {% endif %} id="role3_{{user.id}}">
@@ -186,6 +186,8 @@
 									string = string + " checked ";
 								}
 								string = string + ("id=\"role1_" + aux[0] + "\"><label for=\"role1\">Admin</label>");
+							} else {
+								string = string + ("<label for=\"role1\">Admin</label>");
 							}
 							string = string + ("<input class=\"form-check-input\" type=\"checkbox\" onclick=\"validate(2, "+ aux[0] + ");\"");
 							if (data.roles[aux[0]].includes(2)){
