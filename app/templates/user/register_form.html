@@ -170,7 +170,7 @@
       let total_caracteres = this.value.length;
       $('#password-contador').empty();
       if (total_caracteres<caracteres_password){
-        let string = "Quedan " + (caracteres_password-this.value.length) + " caracteres"
+        let string = "Faltan " + (caracteres_password-this.value.length) + " caracteres"
         $('#password-contador').append(string);
       }
       else{
