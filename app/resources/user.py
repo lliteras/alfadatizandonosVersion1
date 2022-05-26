@@ -108,8 +108,20 @@ def register():
     if birthday>eight_years_ago:
         return render_template('user/register_form.html', incorrectDate = "Seleccione una fecha válida.", email=email, username=username, name=name, surname=surname, provincias=provincias)
     User.register(username, password, province, city, institute, email, name, surname, birthday)
-    return render_template('user/login_form.html', registerSuccess="Registro exitoso!")
-
+    result = User.login(username, username)
+    aux = result[0]
+    session['username'] = aux['username']
+    session['name'] = aux['name']
+    session['email'] = aux['email']
+    session['id'] = aux[1]
+    session['actualRole'] = result[0]['rolename']
+    lista_roles = []
+    for res in result:
+        lista_roles.append(res['rolename'])
+    session['roles'] = lista_roles
+    a = session['roles']
+    return index()    
+    
 def changeActualRole(rolename):
     session['actualRole'] = rolename
     return redirect(url_for('home'))
