@@ -76,13 +76,13 @@
               <a class="nav-link " aria-current="page" href="{{url_for('configuration')}}">Configuración</a>
             </li>
           {% endif %}
+          {% if session.roles|length > 1 %}
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Perfil
             </a>
             <ul class="dropdown-menu" style="width: 200px;" aria-labelledby="navbarDropdown">
               <li><a class="nav-link " aria-current="page" href="{{url_for('profile')}}">Ver perfil</a></li>
-              {% if session.roles|length > 1 %}
               <li class="nav-link text-secondary">Ver página como:</li>
               <li class="ml-2 nav-link text-secondary">
                 {% for roles in session.roles %}
@@ -96,9 +96,9 @@
                 </div>
                 {% endfor %}
               </li>
-              {% endif %}
             </ul>
           </li>
+          {% endif %}
         </ul>
 
           {% if session.username %}

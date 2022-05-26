@@ -73,7 +73,7 @@ def user_exist(username):
 
 def logout():
     session.clear()
-    return redirect(url_for("loginForm"))
+    return redirect(url_for("home"))
 
 def register():
     provincias = Establishment.select_provinces()

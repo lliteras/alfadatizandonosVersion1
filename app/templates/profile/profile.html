@@ -8,7 +8,9 @@
 <div class="container p-3" align="center">
 	<div class="card d-block w-50">
 	  <div class="card-body">
-	    <h5 class="card-title">{{user.name}} {{user.surname}}</h5>
+	    <h5 class="card-title">{{user.name}} {{user.surname}} - {% if session.actualRole=='student' %}Estudiante{% endif %}
+        {% if session.actualRole=='professor' %}Profesor{% endif %}
+        {% if session.actualRole=='admin' %}Admin{% endif %}</h5>
 	    <h6 class="card-subtitle mb-2 text-muted"><i>{{user.username}}</i></h6>
 	    <p class="card-text">
 	    	{{user.localidad}}, {{user.jurisdiccion}}, Argentina
