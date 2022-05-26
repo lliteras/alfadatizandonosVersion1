@@ -20,7 +20,7 @@ from bokeh.tile_providers import CARTODBPOSITRON, get_provider
 #return the plotter page
 def plotter(Bid, activityId):
 
-    if session['id']:
+    if session and session['id']:
 
         graphs = []
         noNav = False

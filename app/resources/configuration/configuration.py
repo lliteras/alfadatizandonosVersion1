@@ -10,7 +10,7 @@ import json
 pagination = 10	
 
 def configuration():
-	if session['username']:
+	if session and session['username']:
 		configuration_data = Configuration.get_file_data()
 		aux = User.get_all_users_with_pagination(pagination, 1, 0)
 		users = aux[0]
@@ -26,7 +26,7 @@ def configuration():
 		return redirect(url_for('home'))
 
 def configuration_AJAX(page,filtered):
-	if session['username']:
+	if session and session['username']:
 		aux = User.get_all_users_with_pagination(pagination, page, filtered)
 		users = aux[0]
 		maxPage = aux[1]
@@ -78,17 +78,17 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 def cambiar_rol(user_id, role_id):
-	if session['username'] and session['role']=="admin":
+	if session and session['username'] and session['role']=="admin":
 		Configuration.change_role(user_id, role_id)
 	return False
 
 def add_role(role_id, user_id):
-	if session['actualRole']=='admin' or session['actualRole']=='superadmin':
+	if session and session['actualRole']=='admin' or session['actualRole']=='superadmin':
 		Configuration.add_role(user_id, role_id)
 	return jsonify(True)
 
 def delete_role(role_id, user_id):
-	if session['actualRole']=='admin' or session['actualRole']=='superadmin':
+	if session and session['actualRole']=='admin' or session['actualRole']=='superadmin':
 		Configuration.delete_role(user_id, role_id)
 	return jsonify(True)
 

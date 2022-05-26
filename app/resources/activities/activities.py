@@ -13,7 +13,7 @@ import datetime
 UPLOAD_FOLDER = 'static/uploads/resolutions'
 
 def activities():
-	if session['name']:
+	if session and session['name']:
 		activities = Activity.getMyActivities(session['id'])
 		finished_activities = []
 		current_activities = []
@@ -40,7 +40,7 @@ def activities():
 		return render_template('/')
 
 def new_activity(course_id, **kwargs):
-	if session['actualRole'] == "professor":
+	if session and session['actualRole'] == "professor":
 		graficos = Activity.get_graph_names()
 
 		datasets = datasets = Course.get_dataset_by_courseId(course_id)
@@ -105,21 +105,25 @@ def create_activity():
 	return redirect(url_for('home'))
 
 def view_activity_data(id):
-	if session['id']:
+	if session and session['id']:
 		actividad = Activity.get_activity_by_id(id)
 		graficos_disponibles = Activity.get_graph_of_activity_by_id(id)
 		alumnos = Activity.get_students_from_activity(id)
 
 
 		return render_template('activities/activity_view_data.html', activity=actividad, available_graphs=graficos_disponibles, students=alumnos)
+	else: 
+		return redirect(url_for('home'))
 
 def view_activity(id):
-	if session['id']:
+	if session and session['id']:
 		actividad = Activity.get_activity_by_id(id)
 		return render_template('activities/activity_view.html', activity=actividad, noNav=True)
+	else: 
+		return redirect(url_for('home'))
 
 def solveActivity(id):
-	if session['id']:
+	if session and session['id']:
 		activity = Activity.get_activity_by_id(id)
 		datasetId= activity['dataset_id']
 		
@@ -135,13 +139,14 @@ def solveActivity(id):
 		user = User.get_information_of_user(session['id'])
 
 		return render_template('activities/solve_activity.html', activity=activity, activityId=id, datasetId=datasetId, socialGraph=socialGraph, plotterTab=plotterTab, resolutions=resolutions, user=user)
+	else:
+		return redirect(url_for('home'))
 
 def isPDF(filename):
 	return filename.split(".")[1] == "pdf"
 
 def addResolutionToActivity():
-
-	if request.method=="POST":
+	if session and request.method=="POST":
 
 		#information of resolution
 		commentary = request.form['commentary']
@@ -182,16 +187,18 @@ def addResolutionToActivity():
 			return  jsonify(data), 400
 
 def correct_activity_view(activity_id, user_id):
-	if session['id']:
+	if session and session['id']:
 		activity = Activity.get_activity_by_id(activity_id)
 		alumno = Activity.get_activity_of_student(activity_id, user_id)
 
 		resolutions = Activity.get_user_activity_resolution(user_id, activity_id)
 
 		return render_template('activities/correct_activity.html', activity=activity, student=alumno, resolutions=resolutions)
+	else:
+		return redirect(url_for('home'))
 
 def viewCorrectedActivity(activity_id, user_id):
-	if session['id']:
+	if session and session['id']:
 		activity = Activity.get_activity_by_id(activity_id)
 		
 		alumno = Activity.get_activity_of_student(activity_id, user_id)
@@ -199,9 +206,11 @@ def viewCorrectedActivity(activity_id, user_id):
 		resolutions = Activity.get_user_activity_resolution(user_id, activity_id)
 
 		return render_template('activities/view_corrected_activity.html', activity=activity, student=alumno, resolutions=resolutions)
+	else:
+		return redirect(url_for('home'))
 
 def correct_activity(activity_id, user_id):
-	if request.method=="POST":
+	if session and request.method=="POST":
 		comentario = request.form['comment']
 		if request.form.get('calification'):
 			nota = request.form['calification']

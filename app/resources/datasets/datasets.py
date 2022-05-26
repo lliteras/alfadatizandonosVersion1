@@ -40,7 +40,7 @@ def getAvailablePages(actualPage, maxPage):
 
 def indexPublics(page, condition):
 
-	if session['id']:
+	if session and session['id']:
 
 		stringCondtion= ''
 
@@ -64,7 +64,7 @@ def indexPublics(page, condition):
 
 def indexProtecteds(page, condition):
 
-	if session['id']:
+	if session and session['id']:
 
 		stringCondtion= ''
 
@@ -89,7 +89,7 @@ def indexProtecteds(page, condition):
 
 def indexPrivates(page, condition):
 
-	if session['id']:
+	if session and session['id']:
 
 		stringCondtion= ''
 
@@ -113,7 +113,7 @@ def indexPrivates(page, condition):
 
 def show(Bid):	
 
-	if session['id']:
+	if session and session['id']:
 
 		if checkSessionCanAccess(Bid):
 
@@ -189,7 +189,7 @@ def checkSessionCanAccess(Bid):
 
 def editShare():
 
-	if session['id']:
+	if session and session['id']:
 
 		if ((request.form.get('id')) and (request.form.get('share'))):
 

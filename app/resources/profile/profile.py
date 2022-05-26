@@ -4,7 +4,7 @@ from models.user import User
 from models.establishment import Establishment
 
 def get_my_profile():
-	if session['id']:
+	if session and session['id']:
 		user = User.get_information_of_user(session['id'])
 		establishments = User.get_establishments_of_user(session['id'])
 		provincias = Establishment.select_provinces()
@@ -12,7 +12,7 @@ def get_my_profile():
 	return render_template(url_for('home'))
 
 def addInstitute():
-	if session['id']:
+	if session and session['id']:
 		establishment = request.form['instituteFormControlSelect']
 		User.add_institute(session['id'], establishment)
 		return redirect(url_for('profile'))

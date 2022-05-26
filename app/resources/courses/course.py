@@ -8,14 +8,14 @@ from datetime import date
 import datetime
 
 def get_courses():
-	if session['actualRole'] == "professor":
+	if session and session['actualRole'] == "professor":
 		cursos = Course.get_my_courses(session['id'])
 		return render_template('course/courses.html', cursos=cursos)
 	else:
 		return redirect(url_for('home'))
 
 def new_course():
-	if session['actualRole'] == "professor":
+	if session and session['actualRole'] == "professor":
 		curricularScopes = get_curricular_scope()
 		establishments = User.get_establishments_of_user(session['id'])
 		return render_template('course/new_course.html', curricularScopes=curricularScopes, establishments=establishments)
@@ -51,7 +51,7 @@ def create_course():
 	return redirect(url_for('home'))
 
 def view_course(course_id):
-	if session['actualRole'] == "professor":
+	if session and session['actualRole'] == "professor":
 
 		course = Course.get_course(course_id)
 
@@ -71,14 +71,14 @@ def view_course(course_id):
 	return redirect(url_for('home'))
 
 def invite_user_to_course(username, course_id):
-	if session['actualRole'] == "professor":
+	if session and session['actualRole'] == "professor":
 		result = Course.invite_user_to_course(username,course_id)
 		return jsonify(result = result)
 	return redirect(url_for('home'))
 
 
 def is_user_on_course(username, course_id):
-	if session['actualRole'] == "professor":
+	if session and session['actualRole'] == "professor":
 		result = Course.is_user_on_course(username,course_id)
 		return jsonify(result = result)
 	return redirect(url_for('home'))
@@ -95,7 +95,7 @@ def course_add_dataset():
 	return redirect(url_for('home'))
 
 def get_curricular_scope():
-	if session['actualRole'] == "professor":
+	if session and session['actualRole'] == "professor":
 		curricularScopes = Course.get_curricular_scope()
 		return curricularScopes
 	return redirect(url_for('home'))

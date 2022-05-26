@@ -42,7 +42,7 @@ def allowed_file(filename):
 
 def uploadFile():
 
-	if session['id']:
+	if session and session['id']:
 
 		if request.method == 'POST':
 			
@@ -94,7 +94,7 @@ def uploadFile():
 
 def configurateUploadJSON ():
 
-	if session['id']:
+	if session and session['id']:
 
 		if request.method == 'POST':
 
@@ -418,7 +418,7 @@ def JSONRecursion(database, data, firstRow, sqlContext, spark, idTable, pos, pos
 
 def configurateUploadCSV():
 
-	if session['id']:
+	if session and session['id']:
 
 		if request.method == 'POST':
 
