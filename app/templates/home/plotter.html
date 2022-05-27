@@ -128,7 +128,7 @@ Graficador
 
     <td style="width:100px;"></td>
     <td class="rounded-3" style="background-color: #89C2D9; padding: 5px;">
-
+      <span style="font-size: 32pt;">1 -</span> <span style="font-size: 25pt;">Seleccionar gráfico</span>
       {% for graph in graphs %}
 
         <label>
@@ -159,10 +159,7 @@ Graficador
         <label>
           <input type="radio" id="map_chart" name="chart" value="map" /><img class="imgBar" src="{{url_for('static', filename='map_chart.png') }}">
         </label>
-        -->
-      
-        <button class="btn btn-primary" id="buttonGenerateChart" disabled style="margin-left: 10px;" onclick="GenerateChart()">Generar gráfico</button> 
-         
+        -->       
     </td>
   </tr>
   <tr style="height:20px"><td style="width:10px"></td></tr>
@@ -170,6 +167,7 @@ Graficador
   <tr valign="top">
     <td style="width:10px"></td>
     <td class="visually-hidden" id="columnsHide">
+      <h4>2 - Arrastrar columna a 3</h1>
       <h3>Columnas de la fuente de datos</h3>
       {% set widthCard = 279 %}
 
@@ -242,6 +240,7 @@ Graficador
     </td>
     <td style="width:25px;"></td>
     <td class="visually-hidden" id="columnsSelectedAndCondition">
+       <h4>3 - Configurar gráfico</h3>
         <h3 id="x_axi_title">Eje X</h3>
         <div  id="order-axi-x" class="card overflow-auto list-group" style="height:140px ; width: 250px;">
         </div>
@@ -284,7 +283,8 @@ Graficador
     <td style="width:100px;"></td>
     <td>
       <div  class="card" style="height:722.5px; width: 1000px; ">
-      <iframe id="iframe" name="iframe" src="" height="700" width="1000"></iframe>  
+        <span style="font-size: 32pt;">4 - Graficar</span><button class="btn btn-primary" id="buttonGenerateChart" disabled style="margin-left: 10px; width: 200px;" onclick="GenerateChart()">Generar gráfico</button> 
+       <iframe id="iframe" name="iframe" src="" height="700" width="1000"></iframe>  
     </td>  
   </tr>
 </table>
