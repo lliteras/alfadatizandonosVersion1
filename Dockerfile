@@ -25,9 +25,9 @@ COPY ./requirements.txt requirements.txt
 RUN mkdir -p venv log /tmp/.ivy /tmp/py /.wdm /.cache/dconf /.mozilla/firefox/profiles/my-profile /.cache/matplotlib /.config/matplotlib
 RUN touch log/error.log log/access.log geckodriver.log
 
-RUN chown -R 1000110000 venv /tmp/py /tmp/.ivy log/error.log log/access.log geckodriver.log /.wdm /.cache/dconf /.mozilla /.cache/matplotlib /.config/matplotlib
+RUN chown -R 1000170000 venv /tmp/py /tmp/.ivy log/error.log log/access.log geckodriver.log /.wdm /.cache/dconf /.mozilla /.cache/matplotlib /.config/matplotlib
 
-USER 1000110000
+USER 1000170000
 
 ENV VIRTUAL_ENV=venv
 RUN python3 -m venv $VIRTUAL_ENV
@@ -35,11 +35,11 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-COPY --chown=1000110000 ./app .
+COPY --chown=1000170000 ./app .
 
 EXPOSE 5000
 
-COPY --chown=1000110000 passwd /tmp/
+COPY --chown=1000170000 passwd /tmp/
 
 #variables $DB_HOST, DB_NAME, $DB_USER, $DB_PASS
 
