@@ -9,19 +9,19 @@
 		<form method="POST" action="/create_course" onsubmit="return validate();">
 			<label class="text-danger d-block">{{ emptyField }}</label>
 			<div class="form-group">
-		    	<label class="titulo-form" for="inputTitle">Nombre</label>
+		    	<label class="titulo-form" for="inputTitle">Nombre (*)</label>
 		    	<input type="text" class="form-control" name="name" value="{{nombre}}" id="inputTitle" placeholder="Ingrese un título">
 		  	</div>
 		  	<div class="form-group">
-		  		<label class="titulo-form" for="inputBeginDate">Fecha de inicio</label>
+		  		<label class="titulo-form" for="inputBeginDate">Fecha de inicio (*)</label>
 		  		<input type="date" class="form-control" name="startDate" id="inputBeginDate">
 		  	</div>
 		  	<div class="form-group">
-		  		<label class="titulo-form" for="inputEndDate">Fecha de fin</label>
+		  		<label class="titulo-form" for="inputEndDate">Fecha de fin (*)</label>
 		  		<input type="date" class="form-control" name="endDate" id="inputEndDate">
 		  	</div>
 		  	<div class="form-group">
-		  		<label class="titulo-form" for="inputEstablishment">Establecimiento educativo</label>
+		  		<label class="titulo-form" for="inputEstablishment">Establecimiento educativo (*)</label>
 		  		<select class="form-select" name="inputEstablishment" id="inputEstablishment" >
 		  			<option selected value=""> -- Selecciona una opción -- </option>
 		  			{% for establishment in establishments %}
@@ -30,7 +30,7 @@
 		  		</select>
 		  	</div>
 		  	<div class="form-group">
-		  		<label class="titulo-form" for="inputCiclo">Ciclo</label>
+		  		<label class="titulo-form" for="inputCiclo">Ciclo (*)</label>
 		  		<select class="form-select" name="inputCiclo" id="inputCiclo" >
 		  			<option selected value=""> -- Selecciona una opción -- </option>
 		  			<option value="1">Ciclo básico</option>
@@ -55,7 +55,7 @@
 		  		</select>
 		  	</div>
 		  	<div class="form-group">
-		  		<label class="titulo-form" for="inputCurricularScope">Ámbito curricular</label>
+		  		<label class="titulo-form" for="inputCurricularScope">Ámbito curricular (*)</label>
 		  		<select class="form-select" name="inputCurricularScope" id="inputCurricularScope">
 		  			<option selected value=""> -- Selecciona una opción -- </option>
 		  			{% for cs in curricularScopes %}
@@ -65,6 +65,7 @@
 		  	</div>
 		  	<label class="d-none d-block text-danger" id="dates_error"></label>
 		  	<label class="text-danger d-block">{{dateError}}</label>
+				<label class="titulo-form">(*) Campos obligatorios</label>
 		  	<div class="d-grid gap-2 mt-2">
 		  		<button type="submit" class="btn btn-large btn-info" >Crear curso</button>
 			</div>

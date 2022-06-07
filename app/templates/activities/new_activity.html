@@ -10,34 +10,34 @@
 		<form method="POST" action="/activities/create_activity" onsubmit="return validate();">
 			<label class="text-danger d-block">{{emptyFields}}</label>
 			<div class="form-group">
-		    	<label class="titulo-form" for="inputTitle">Título de la actividad</label>
+		    	<label class="titulo-form" for="inputTitle">Título de la actividad (*)</label>
 		    	<span class="contador_caracteres" id="contador_caracteres_titulo">Máximo 64 caracteres</span>
 		    	<input type="text" class="form-control" maxlength="64" name="title" id="inputTitle" placeholder="Ingrese un título" value="{{title}}">
 		  	</div>
 		  	<div class="md-form">
 		  		<span class="titulo-form">Enunciado (Esta sección será lo que el estudiante verá en su actividad)</span>
 		  		<div class="card d-block p-3">
-					  	<label class="titulo-form" for="inputStatementTitle">Título del enunciado</label>
+					  	<label class="titulo-form" for="inputStatementTitle">Título del enunciado (*)</label>
 				  		<span class="contador_caracteres" id="contador_caracteres_enunciado_titulo">Máximo 64 caracteres</span>
 				    	<input type="text" value="{{statement_title}}" class="form-control" maxlength="64" name="inputStatementTitle" id="inputStatementTitle">
-				    	<label class="titulo-form" for="inputStatement">Consigna del enunciado</label>
+				    	<label class="titulo-form" for="inputStatement">Consigna del enunciado (*)</label>
 				  		<span class="contador_caracteres" id="contador_caracteres_consigna">Máximo 256 caracteres</span>
 				    	<textarea class="md-textarea form-control" maxlength="256" name="inputStatement" id="inputStatement" rows="2">{{statement}}</textarea>
 				</div>
 		  		
 		  	</div>
 		  	<div class="md-form">
-		  		<label class="titulo-form" for="inputObjective">Objetivo de la actividad</label>
+		  		<label class="titulo-form" for="inputObjective">Objetivo de la actividad (*)</label>
 		  		<span class="contador_caracteres" id="contador_caracteres_objetivo">Máximo 256 caracteres</span>
 		    	<textarea class="md-textarea form-control" maxlength="256" name="objective" id="inputObjective" rows="2">{{objective}}</textarea>
 		  	</div>
 		  	<div class="md-form">
-		  		<label class="titulo-form" for="inputDescription">Descripción de la actividad</label>
+		  		<label class="titulo-form" for="inputDescription">Descripción de la actividad (*)</label>
 		  		<span class="contador_caracteres" id="contador_caracteres_descripcion">Máximo 256 caracteres</span>
 		    	<textarea class="md-textarea form-control" maxlength="256" name="description" id="inputDescription" rows="2" >{{description}}</textarea>
 		  	</div>
 		  	<div class="form-group">
-		  		<label class="titulo-form" for="inputDescription">Fuente de datos</label>
+		  		<label class="titulo-form" for="inputDescription">Fuente de datos (*)</label>
 		  		<select class="form-select" name="datasetSelect" required>
 		  			<option value=""> -- Seleccione una opción de la lista -- </option>
 		  			{% for dataset in datasets %}
@@ -46,7 +46,7 @@
 		  		</select>
 		  	</div>
 		  	<div class="form-group">
-		  		<label class="d-block titulo-form">Gráficos disponibles para el estudiante al momento de realizar la actividad</label>
+		  		<label class="d-block titulo-form">Gráficos disponibles para el estudiante al momento de realizar la actividad (*)</label>
 		  		{% for graph in graphs %}
 		  		<input type="checkbox" class="form-check-input" id="checkboxGraph{{ graph.id }}" value="{{ graph.id }}" name="graph" {% if graph.id | string in checked_graphs %}checked{% endif %}>
     			<label class="form-check-label" for="checkboxGraph{{ graph.id }}">{{ graph.spanish_name }}</label>
@@ -58,11 +58,11 @@
 		  	</div>
 		  	<label class="text-danger d-block">{{errorGraficos}}</label>
 		  	<div class="form-group">
-		  		<label class="titulo-form" for="inputBeginDate">Fecha de publicación</label>
+		  		<label class="titulo-form" for="inputBeginDate">Fecha de publicación (*)</label>
 		  		<input type="date" class="form-control" name="startDate" id="inputBeginDate" value="{{startDate}}">
 		  	</div>
 		  	<div class="form-group">
-		  		<label class="titulo-form" for="inputEndDate">Fecha de entrega</label>
+		  		<label class="titulo-form" for="inputEndDate">Fecha de entrega (*)</label>
 		  		<input type="date" class="form-control" name="endDate" id="inputEndDate" value={{endDate}}>
 				<label class="d-none d-block text-danger" id="dates_error"></label>
 				<label class="d-block text-danger">{{errorFechas}}</label>
@@ -96,6 +96,9 @@
 		  	 <div class="form-group">
 		  		<input class="form-check-input" type="checkbox" name="checkboxNoCalification" id="checkboxNoCalification" value="1" {% if has_calification==false %} checked {% endif %}>
 		  		<label for="checkboxNoCalification">Actividad sin calificación</label>
+		  	</div>
+				<div class="form-group">
+		  		<label>(*) Campos obligatorios</label>
 		  	</div>
 		  	<input type="hidden" name="course" value="{{course_id}}">
 		  	<div class="d-grid gap-2 mb-2">

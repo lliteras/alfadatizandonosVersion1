@@ -37,7 +37,7 @@ def activities():
 							current_activities.append(activity)
 		return render_template('activities/activities.html', activities=activities, current_activities=current_activities, finished_activities=finished_activities, overdue_activities=overdue_activities, undelivered_activities=undelivered_activities, corrected_activities=corrected_activities, today=date.today(), user_id=session['id'])
 	else:
-		return render_template('/')
+		return redirect(url_for('home'))
 
 def new_activity(course_id, **kwargs):
 	if session and session['actualRole'] == "professor":

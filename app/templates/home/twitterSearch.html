@@ -155,6 +155,9 @@
   });
 
   function GenerateChart() {
+    if($('#searchString').val() == "") {
+      return
+    }
     //iframe
     var iframe = $('#iframe')[0];
     
