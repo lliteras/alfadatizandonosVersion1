@@ -126,7 +126,7 @@
 		</div>
 	</div>
 	<hr class="mt-1">
-	<div id="activitiesTitle">
+	<div id="activitiesTitle" class="{% if (alumnos|length == 0) or (datasets|length == 0) %}d-none{% endif %}">
 		<img src="{{url_for('static', filename='expand_arrow.png') }}"
 			style="height: 25px; width: 25px; display:inline-block; margin-bottom: 10px; margin-right:25px">
 		<h2 style="display:inline-block;">Actividades del curso</h2>
@@ -196,17 +196,17 @@
 		if (usuario_input == "") {
 			$('#invitationError').append("Debe ingresar un usuario");
 		} else {
-			$.getJSON($SCRIPT_ROOT + "userExist/" + usuario_input, {}, function (data) {
+			$.getJSON("/courses/userExist/" + usuario_input, {}, function (data) {
 				usuario_existe = data.result;
 				if (usuario_existe == -1) {
 					$('#invitationError').append("El usuario o email no existe");
 				} else {
-					$.getJSON($SCRIPT_ROOT + "isStudentOnCourse/" + usuario_existe + "&" + {{ course.courseid }}, { }, function(data) {
+					$.getJSON("/courses/isStudentOnCourse/" + usuario_existe + "&" + {{ course.courseid }}, { }, function(data) {
 						if (data.result) {
 							$('#invitationError').append("El usuario ya se encuentra en el curso");
 						}
 						else {
-							$.getJSON($SCRIPT_ROOT + "inviteUserToCourse/" + usuario_existe + "&" + {{ course.courseid }}, { }, function(data) {
+							$.getJSON("/courses/inviteUserToCourse/" + usuario_existe + "&" + {{ course.courseid }}, { }, function(data) {
 								usuario = data.result;
 								$('#alumnsTableBody').append("<tr><td>" + usuario[1] + ", " + usuario[0] + "</td><td>" + usuario[2] + "</td><td>" + usuario[3] + "</td></tr>")
 								var input = $('#usernameInput option[value="' + usuario_input + '"]').remove();
@@ -244,7 +244,8 @@
 			errorActivityButton.append("Debe tener al menos un dataset asociado al curso para crear la actividad.")
 			return false;
 		}
-		window.location.href = $SCRIPT_ROOT + "/activities/new_activity/{{course.courseid}}";
+		$('#datasetTable').removeClass('d-none');
+		window.location.href = "/activities/new_activity/{{course.courseid}}";
 
 	});
 </script>
