@@ -5,6 +5,8 @@
 {% block header %}
   <meta charset="utf-8">
   <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock%}
 {% block content %}
 <div class="modal" id="modalExplanation" tabindex="-1">
@@ -43,7 +45,24 @@
     </div>
   </div>
 </div>
-
+<div class="modal" id="staticBackdrop" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Entrega</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Si modifica alguno de los parámetros se realizará una búsqueda nueva ¿Desea realizar una nueva búsqueda?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+          onclick="restoreSearchButton()">Habilitar</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="d-flex justify-content-center">
   <div class="card justify-content-center" style="width: 60rem; margin-top: 10px;">
@@ -73,25 +92,25 @@
       <div class="col-sm">
         <div class="d-flex">
           <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="preposiciones">
+            <input class="form-check-input" data-bs-toggle="modal" data-bs-target="#staticBackdrop" type="checkbox" id="preposiciones">
             <label class="form-check-label" for="preposiciones">Preposiciones (a, ante bajo...)</label>
           </div>
         </div>
         <div class="d-flex">
           <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="articulos">
+            <input class="form-check-input" data-bs-toggle="modal" data-bs-target="#staticBackdrop" type="checkbox" id="articulos">
             <label class="form-check-label" for="articulos">Artículos</label>
           </div>
         </div>
         <div class="d-flex">
           <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="pronombres">
+            <input class="form-check-input" data-bs-toggle="modal" data-bs-target="#staticBackdrop" type="checkbox" id="pronombres">
             <label class="form-check-label" for="pronombres">Pronombres</label>
           </div>
         </div>
         <div class="d-flex">
           <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="conjunciones">
+            <input class="form-check-input" data-bs-toggle="modal" data-bs-target="#staticBackdrop" type="checkbox" id="conjunciones">
             <label class="form-check-label" for="conjunciones">Conjunciones</label>
           </div>
         </div>
@@ -99,40 +118,34 @@
       <div class="col-sm">
         <div class="d-flex">
           <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="adverbios">
+            <input class="form-check-input" data-bs-toggle="modal" data-bs-target="#staticBackdrop" type="checkbox" id="adverbios">
             <label class="form-check-label" for="adverbios">Adverbios</label>
           </div>
         </div>
         <div class="d-flex">
           <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="conjugaciones">
+            <input class="form-check-input" data-bs-toggle="modal" data-bs-target="#staticBackdrop" type="checkbox" id="conjugaciones">
             <label class="form-check-label" for="conjugaciones">Conjugaciones de ser, estar, haber y tener</label>
           </div>
         </div>
         <div class="d-flex">
           <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="links">
+            <input class="form-check-input" data-bs-toggle="modal" data-bs-target="#staticBackdrop" type="checkbox" id="links">
             <label class="form-check-label" for="links">Links</label>
           </div>
         </div>
       </div>
       <div class="col-sm">
         <div class="d-flex">
-          <button class="btn btn-primary" onclick='(function(){
-            document.getElementById("preposiciones").checked = true
-            document.getElementById("articulos").checked = true
-            document.getElementById("pronombres").checked = true
-            document.getElementById("conjunciones").checked = true
-            document.getElementById("adverbios").checked = true
-            document.getElementById("conjugaciones").checked = true
-            document.getElementById("links").checked = true
-          })()'>Seleccionar todo</button>
+          <button class="btn btn-primary" onclick='selection(event)'>Seleccionar todo</button>
         </div>
+        <br/>
+        <button class="btn btn-primary" onclick='deselection(event)'>Des-seleccionar todo</button>
       </div>
     </div>
   </div>
   <div class="d-flex justify-content-center" style="margin-Bottom:10px;">
-    <button type="button" class="btn btn-primary" style="width:200px" onclick="GenerateChart()">Buscar</button>
+    <button type="button" id="searchButton" class="btn btn-primary" style="width:200px" onclick="GenerateChart()">Buscar</button>
   </div>
   </div>
 </div>
@@ -146,7 +159,25 @@
 </div>
 
 <script>
+ function selection (e){
+    document.getElementById("preposiciones").checked = true
+    document.getElementById("articulos").checked = true
+    document.getElementById("pronombres").checked = true
+    document.getElementById("conjunciones").checked = true
+    document.getElementById("adverbios").checked = true
+    document.getElementById("conjugaciones").checked = true
+    document.getElementById("links").checked = true
+  }
 
+  function deselection (e){
+    document.getElementById("preposiciones").checked = false
+    document.getElementById("articulos").checked = false
+    document.getElementById("pronombres").checked = false
+    document.getElementById("conjunciones").checked = false
+    document.getElementById("adverbios").checked = false
+    document.getElementById("conjugaciones").checked = false
+    document.getElementById("links").checked = false
+  }
   $( document ).ready(function() {
 
     
@@ -154,10 +185,15 @@
 
   });
 
+  function restoreSearchButton() {
+    $("#searchButton").attr("disabled", false)
+  }
+
   function GenerateChart() {
     if($('#searchString').val() == "") {
       return
     }
+    $("#searchButton").attr("disabled", true)
     //iframe
     var iframe = $('#iframe')[0];
     
