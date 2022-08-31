@@ -39,16 +39,24 @@ COPY --chown=1000170000 ./app .
 
 EXPOSE 5000
 
-COPY --chown=1000170000 passwd /tmp/
+COPY --chown=1000170000 passwd.template /tmp/
 
 #variables $DB_HOST, DB_NAME, $DB_USER, $DB_PASS
+#LD_PRELOAD=/usr/lib64/libnss_wrapper.so
+#NSS_WRAPPER_PASSWD=/tmp/passwd
+#NSS_WRAPPER_GROUP=/etc/group
+
+RUN mkdir /tmp/user
+
+USER 1000170000
+RUN export USER_ID=$(id -u) && \
+export GROUP_ID=$(id -g) && \
+export HOME=/tmp/user &&\
+envsubst < /tmp/passwd.template > /tmp/passwd
 
 CMD envsubst < config.py.template > config.py && \
     envsubst < resources/home.py.template > resources/home.py && \
     envsubst < resources/educational_establishments/extracting_data.py.template > resources/educational_establishments/extracting_data.py && \
-    LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libnss_wrapper.so \
-    NSS_WRAPPER_PASSWD=/tmp/passwd \
-    NSS_WRAPPER_GROUP=/etc/group \
     gunicorn index:app -b 0.0.0.0:5000 \
     --workers "$NUM_WORKERS" \
     --timeout "$TIMEOUT" \
