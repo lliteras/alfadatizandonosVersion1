@@ -129,6 +129,7 @@ def configurateUploadJSON ():
 					
 					spark = SparkSession.builder.appName("Alfadatizando").config('spark.driver.host', '127.0.0.1').config("spark.jars.ivy","/tmp/.ivy").config("ivy.home","/tmp").config("ivy.cache.dir","/tmp").config("spark.jars", (os.path.join("resources","postgresql-42.3.0.jar"))).getOrCreate()
 					sqlContext = SQLContext(spark)
+					spark.sqlContext.setLogLevel("INFO")
 
 					#data = sqlContext.read.json(os.path.join(UPLOAD_FOLDER,filename))
 
@@ -455,6 +456,7 @@ def configurateUploadCSV():
 
 					spark = SparkSession.builder.appName("Alfadatizando").config("spark.jars", (os.path.join("resources","postgresql-42.3.0.jar"))).config("ivy.home", "/tmp").config('spark.driver.host', '127.0.0.1').getOrCreate()
 					sqlContext = SQLContext(spark)
+					spark.sqlContext.setLogLevel("INFO")
 
 					data = sqlContext.read.format("csv").option("encoding", "UTF-8").load(os.path.join(UPLOAD_FOLDER,filename))
 
