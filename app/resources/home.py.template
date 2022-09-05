@@ -61,7 +61,7 @@ def uploadFile():
 
 				if fileType == 'csv':
 
-					spark = SparkSession.builder.appName("Alfadatizando").config("spark.jars", (os.path.join("resources","postgresql-42.3.0.jar"))).config("spark.jars.ivy","/tmp/.ivy").config("ivy.home","/tmp").config("ivy.cache.dir","/tmp").config("spark.jars", (os.path.join("resources","postgresql-42.3.0.jar"))).config('spark.driver.host', '127.0.0.1').getOrCreate()
+					spark = SparkSession.builder.appName("Alfadatizando").master('local').config("spark.jars.ivy","/tmp/.ivy").config("ivy.home","/tmp").config("ivy.cache.dir","/tmp").config("spark.jars", (os.path.join("resources","postgresql-42.3.0.jar"))).config('spark.driver.host', '127.0.0.1').getOrCreate()
 					sqlContext = SQLContext(spark)
 
 					firstRow = sqlContext.read.format("csv").option("encoding", "UTF-8").load(os.path.join(UPLOAD_FOLDER,filename)).limit(2).first()
@@ -215,6 +215,8 @@ def configurateUploadJSON ():
 							return render_template('home/uploadConfigurationJSON.html', filename=fileName)
 						
 						flash('Lo sentimos, la carga de la fuente de datos ha fallado', 'danger')
+
+						print(exceptionString)
 
 						return render_template('home/dragAndDrop.html')
 			
@@ -451,7 +453,7 @@ def configurateUploadCSV():
 
 						Home.add_dataset_stablishment(databaseInAlfadatizando['id'], establishments)
 
-					spark = SparkSession.builder.appName("Alfadatizando").config("spark.jars", (os.path.join("resources","postgresql-42.3.0.jar"))).getOrCreate().config("ivy.home", "/tmp").config('spark.driver.host', '127.0.0.1').getOrCreate()
+					spark = SparkSession.builder.appName("Alfadatizando").config("spark.jars", (os.path.join("resources","postgresql-42.3.0.jar"))).config("ivy.home", "/tmp").config('spark.driver.host', '127.0.0.1').getOrCreate()
 					sqlContext = SQLContext(spark)
 
 					data = sqlContext.read.format("csv").option("encoding", "UTF-8").load(os.path.join(UPLOAD_FOLDER,filename))
@@ -529,6 +531,7 @@ def configurateUploadCSV():
 							}
 							return  jsonify(data), 400
 						
+						print(exceptionString)
 						data = {
 							"message": 'Lo sentimos, la carga de la fuente de datos ha fallado',
 							"status": 400

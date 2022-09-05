@@ -167,7 +167,7 @@ def addResolutionToActivity():
 				filename = secure_filename(file.filename)		
 				if isPDF(filename):
 					id = Activity.inset_resolution(activityId, userId, resolutionType, dateTimeNow ,commentary)
-					file.save(os.path.join(UPLOAD_FOLDER, "resolution_" + str(id) + 'pdf'))
+					file.save(os.path.join(UPLOAD_FOLDER, "resolution_" + str(id) + '.pdf'))
 					data = {
 							"message": 'Respuesta cargada correctamente.',
 							"status": 200
