@@ -455,8 +455,7 @@ def configurateUploadCSV():
 						Home.add_dataset_stablishment(databaseInAlfadatizando['id'], establishments)
 
 					spark = SparkSession.builder.appName("Alfadatizando").config("spark.jars", (os.path.join("resources","postgresql-42.3.0.jar"))).config("ivy.home", "/tmp").config('spark.driver.host', '127.0.0.1').getOrCreate()
-					sqlContext = SQLContext(spark)
-					spark.sqlContext.setLogLevel("INFO")
+					sqlContext = SQLContext(spark)	
 
 					data = sqlContext.read.format("csv").option("encoding", "UTF-8").load(os.path.join(UPLOAD_FOLDER,filename))
 

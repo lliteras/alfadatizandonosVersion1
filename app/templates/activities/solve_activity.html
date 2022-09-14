@@ -12,6 +12,7 @@ Resolver actividad
 	<script src="https://unpkg.com/jspdf-autotable"></script>
 	<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 	<script>
+		import 'jspdf-autotable'
 		applyPlugin(jsPDF)
 		window.doc = new jsPDF('p', 'pt', 'a4');
 		window.doc.setFontSize('11');
@@ -287,6 +288,19 @@ Resolver actividad
           '</div>')
 			})
 		}
+
+		function anadir_a_respuesta ()	 {
+			const canvas = document.getElementById('iframeGraph').contentWindow.document.getElementById('iframe').contentWindow.document.getElementsByTagName('canvas')[0]
+			if(canvas) {
+				const lines = printGraphParameters()
+				canvasToPdf(canvas, lines)
+				window.doc.addPage();
+			}
+			const img = document.getElementById('iframeGraph').contentWindow.document.getElementById('iframe').contentWindow.document.getElementById('nav-profile').getElementsByTagName('img')[0]
+			imgToPdf(img)
+			$('#flashes').append("<div class='alert alert-success alert-dismissible fade show' id='alert' style='margin: auto; width: 60%; ' role='alert'>" +
+						res.message +
+			"<button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button></div>")} 
 	</script>
 </head>
 
@@ -364,16 +378,7 @@ Resolver actividad
 						{% if socialGraph %}
 						<div class="tab-pane fade" id="nav-social" role="tabpanel" aria-labelledby="nav-profile-tab"
 							style="width: 100%">
-							<button type="button" class="btn btn-primary" onclick="(function(){
-								const canvas = document.getElementById('iframeGraph').contentWindow.document.getElementById('iframe').contentWindow.document.getElementsByTagName('canvas')[0]
-								if(canvas) {
-									const lines = printGraphParameters()
-									canvasToPdf(canvas, lines)
-									window.doc.addPage();
-								}
-								const img = document.getElementById('iframeGraph').contentWindow.document.getElementById('iframe').contentWindow.document.getElementById('nav-profile').getElementsByTagName('img')[0]
-								imgToPdf(img)
-							})()">
+							<button type="button" class="btn btn-primary" onclick="anadir_a_respuesta">
 								Añadir a la respuesta
 							</button>
 							<iframe src="{{url_for('twitter_search', noNav=1)}}" id="iframeGraph" style="width:inherit; height: 150vh"></iframe>

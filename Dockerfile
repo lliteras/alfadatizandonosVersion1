@@ -35,16 +35,15 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 RUN pip3 install --no-cache-dir -r requirements.txt
 
+#troubleshooting
+USER 0
+RUN apt-get update --fix-missing && apt install --no-install-recommends -y nano
+
 COPY --chown=1000170000 ./app .
 
 EXPOSE 5000
 
 COPY --chown=1000170000 passwd.template /tmp/
-
-#variables $DB_HOST, DB_NAME, $DB_USER, $DB_PASS
-#LD_PRELOAD=/usr/lib64/libnss_wrapper.so
-#NSS_WRAPPER_PASSWD=/tmp/passwd
-#NSS_WRAPPER_GROUP=/etc/group
 
 RUN mkdir /tmp/user
 
