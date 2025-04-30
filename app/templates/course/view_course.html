@@ -1,0 +1,252 @@
+{% extends "layout.html" %}
+{% block header %}
+<script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='styles/courses.css') }}">
+{% endblock%}
+{% block title %}Ver curso{% endblock %}
+{% block content %}
+<div class="container">
+	<h1 align="center">{{course.coursename}}</h1>
+	<h2 align="cener">Información general</h2>
+	<hr>
+	<div id="alumnosTitle">
+		<img src="{{url_for('static', filename='expand_arrow.png') }}"
+			style="height: 25px; width: 25px; display:inline-block; margin-bottom: 10px; margin-right:25px">
+		<h2 style="display:inline-block;">Matriculación de estudiantes al curso</h2>
+	</div>
+	<div id="alumnosList">
+		<span>*Los alumnos deben registrarse previamente en la página principal</span>
+		<table class="table">
+			<thead>
+				<th>Nombre</th>
+				<th>Email</th>
+				<th>Nombre de Estudiante</th>
+			</thead>
+			<tbody id="alumnsTableBody">
+				{% for alumno in alumnos %}
+				<tr>
+					<td>{{alumno.surname}}, {{alumno.name}}</td>
+					<td>{{alumno.email}}</td>
+					<td>{{alumno.username}}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		{% if students_to_add|length > 0 %}
+		<div class="container mb-2" align="center" id="inviteStudentContainer">
+			<label class="text-danger" id="invitationError"></label>
+			<form id="invitationForm" class="w-50 float-right">
+				<div class="form-select row">
+					<label>Añadir estudiante al curso:</label>
+					<label for="usernameInput" class="d-none">Email</label>
+					<select name="username" id="usernameInput" class="form-control" placeholder="Ingrese aquí">
+						<option value=""> -- Seleccione un estudiante de la lista --</option>
+						{% for student in students_to_add %}
+						<option value="{{student.username}}">{{student.name}} {{student.surname}} | {{student.username}}
+						</option>
+						{% endfor %}
+					</select>
+					<input type="submit" class="col-sm-2 btn btn-info mt-2" value="Añadir">
+				</div>
+			</form>
+		</div>
+		{% else %}
+		<label class="d-block">No hay más estudiantes diponibles en el curso para invitar.</label>
+		{% endif %}
+		<label class="d-block d-none" id="emptyList">No hay más estudiantes diponibles en el curso para invitar.</label>
+	</div>
+	<hr class="mt-1">
+	<div id="datasetsTitle">
+		<img src="{{url_for('static', filename='expand_arrow.png') }}"
+			style="height: 25px; width: 25px; display:inline-block; margin-bottom: 10px; margin-right:25px">
+		<h2 style="display:inline-block;">Fuentes de datos disponibles para este curso</h2>
+	</div>
+	<div id="datasetsSection">
+		<table class="table table-hover">
+			<thead>
+				<th>Nombre de la fuente de datos</th>
+				<th>Subida por</th>
+				<th>Acciones</th>
+			</thead>
+			<tbody id="datasetTable">
+				{% for dataset in datasets %}
+				<tr>
+					<td>{{dataset.dataset_name}}</td>
+					<td>{{dataset.name}} {{dataset.surname}}</td>
+					<td>
+						<button type="button" class="btn btn-primary btn-sm"
+							onclick="window.location.href='/datasets/show/{{dataset.id}}'">
+							Inspeccionar
+						</button>
+						<button type="button" class="btn btn-primary btn-sm"
+							onclick="window.location.href='/plotter/{{dataset.id}}'">
+							Graficar
+						</button>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		<div class="d-grid gap-2">
+			<button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Agregar
+				fuente de datos</button>
+		</div>
+		<!-- Modal -->
+		<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+			aria-labelledby="staticBackdropLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+
+					<form action="{{url_for('course_add_dataset')}}" id="formCondition" method=post>
+						<div class="modal-header">
+							<h5 class="modal-title" id="staticBackdropLabel">Elija la fuente de datos a agregar</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+
+							<h5>Fuente de datos a agregar:</h5>
+							<select style="display: inline; width: 300px;" id="dataset" name="dataset"
+								class="form-select">
+								{% for dataset in datasetsToAdd %}
+								<option value="{{dataset.id}}">{{dataset.dataset_name}}</option>
+								{% endfor%}
+							</select>
+							<br />
+							<input type="hidden" name="courseId" id="courseId" value="{{course.courseid}}"></input>
+							<br />
+
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+							<input type="submit" class="btn btn-primary" name="submit" value="Agregar">
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<hr class="mt-1">
+	<div id="activitiesTitle" class="{% if (alumnos|length == 0) or (datasets|length == 0) %}d-none{% endif %}">
+		<img src="{{url_for('static', filename='expand_arrow.png') }}"
+			style="height: 25px; width: 25px; display:inline-block; margin-bottom: 10px; margin-right:25px">
+		<h2 style="display:inline-block;">Actividades del curso</h2>
+	</div>
+	<div id="activitiesSection">
+		<table class="table table-hover">
+			<thead>
+				<th>Título</th>
+				<th>Descripción</th>
+				<th>Estado</th>
+			</thead>
+			<tbody>
+				{% for activity in activities %}
+				<tr class="activity-row" onclick="getActivity({{activity.id}});">
+					<td>{{activity.title}}</td>
+					<td>{{activity.description}}</td>
+					<td>
+						{% if activity.end_date > fecha_actual %}
+						<p class="font-italic">Finaliza el {{activity.end_date}}</p>
+						{% else %}
+						<span class="font-italic">Finalizado el {{activity.end_date}}</span>
+						{% endif %}
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		<div class="d-grid gap-2">
+			<label class="d-none d-block text-danger" id="errorActivityButton"></label>
+			<a class="btn btn-info" id="newAtivityButton">Nueva actividad</a>
+		</div>
+	</div>
+</div>
+<script>
+
+	$(document).ready(function () {
+		$("#alert").fadeTo(10000, 500).slideUp(500, function () {
+			$("#alert").slideUp(500);
+		});
+
+	});
+
+
+	$(document).on('load', funcion());
+
+	function funcion() {
+		$('#alumnosList').slideUp();
+		$('#alumnosTitle').click(function () {
+			$('#alumnosList').slideToggle();
+		});
+		$('#activitiesSection').slideUp();
+		$('#activitiesTitle').click(function () {
+			$('#activitiesSection').slideToggle();
+		});
+		$('#datasetsSection').slideUp();
+		$('#datasetsTitle').click(function () {
+			$('#datasetsSection').slideToggle();
+		});
+	}
+
+
+
+	$('#invitationForm').on('submit', function (e) {
+		let usuario_input = $('#usernameInput').val();
+		$('#invitationError').empty();
+		let usuario_existe
+		if (usuario_input == "") {
+			$('#invitationError').append("Debe ingresar un usuario");
+		} else {
+			$.getJSON("/courses/userExist/" + usuario_input, {}, function (data) {
+				usuario_existe = data.result;
+				if (usuario_existe == -1) {
+					$('#invitationError').append("El usuario o email no existe");
+				} else {
+					$.getJSON("/courses/isStudentOnCourse/" + usuario_existe + "&" + {{ course.courseid }}, { }, function(data) {
+						if (data.result) {
+							$('#invitationError').append("El usuario ya se encuentra en el curso");
+						}
+						else {
+							$.getJSON("/courses/inviteUserToCourse/" + usuario_existe + "&" + {{ course.courseid }}, { }, function(data) {
+								usuario = data.result;
+								$('#alumnsTableBody').append("<tr><td>" + usuario[1] + ", " + usuario[0] + "</td><td>" + usuario[2] + "</td><td>" + usuario[3] + "</td></tr>")
+								var input = $('#usernameInput option[value="' + usuario_input + '"]').remove();
+								$('#usernameInput').val("");
+								if ($('#usernameInput > option').length === 1) {
+									$('#inviteStudentContainer').addClass("d-none");
+									$('#emptyList').removeClass("d-none");
+								}
+							});
+		}
+	});
+					}
+				});
+			}
+	return false;
+		});
+
+	function getActivity(id) {
+		window.location.href = '/activities/view_activity_data/' + id;
+	}
+
+	$('#newAtivityButton').on('click', function () {
+		var alumnos = $('#alumnsTableBody');
+		var errorActivityButton = $('#errorActivityButton');
+		var datasets = $('#datasetTable');
+		if (alumnos.children().length == 0) {
+			errorActivityButton.empty();
+			errorActivityButton.removeClass('d-none');
+			errorActivityButton.append("Debe tener al menos un estudiante en el curso para crear la actividad.");
+			return false;
+		}
+		if (datasets.children().length == 0) {
+			errorActivityButton.empty();
+			errorActivityButton.removeClass('d-none');
+			errorActivityButton.append("Debe tener al menos un dataset asociado al curso para crear la actividad.")
+			return false;
+		}
+		$('#datasetTable').removeClass('d-none');
+		window.location.href = "/activities/new_activity/{{course.courseid}}";
+
+	});
+</script>
+{% endblock %}

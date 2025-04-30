@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% block title %}Cargar una nueva fuente de datos{% endblock %}
+{% block header %}
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='styles/dragAndDrop.css') }}">
+<script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+{% endblock %}
+{% block content %}
+{% if message %}
+<div class="alert alert-success alert-dismissible fade show" id="alert" style="margin: auto; width: 60%; "
+	role="alert">
+	{{ message }}
+	<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
+<div class="container d-flex" style="height: 90%">
+	<div class="row margin-row" style="width: 100%">
+		<div class="col">
+			<h1>Cargar una nueva fuente de datos</h1>
+			<p>(esta versión sólo permite trabajar con archivos de extensión .csv y .json)</p>
+			<ol>
+				<li>Seleccione el archivo a cargar. Desde "Examinar" podrá navegar en su explorador de archivos, o bien,
+					puede usar la opción
+					de arrastrar y soltar en el cuadro.
+				</li>
+				<li>
+					Presione "Subir". Esta acción puede demorar varios minutos dependiendo del tamaño de su archivo
+					(tamaño máximo: 100MB o 100.000KB)
+				</li>
+			</ol>
+		</div>
+		<div class="col">
+			<form action="{{url_for('uploadFile')}}" id="file-upload-form" class="upload-form" method=post
+				enctype=multipart/form-data style="height: 100%">
+				<div class="card" style="height: 50px; width: 100%;">
+					<div class="mb-3">
+						<input id="file-upload" class="form-control form-control-lg" type="file" name=file id="file"
+							placeholder="Archivo">
+					</div>
+					<br>
+					<input id="submit-button" type="submit" class="btn btn-info" style="width:100%" value="Subir">
+				</div>
+			</form>
+			<div class="carga d-none" id="carga"
+				style="background: url(../static/images/charge.gif) center center no-repeat">
+			</div>
+		</div>
+	</div>
+</div>
+<script src="{{url_for('static', filename='scripts/dragAndDrop.js') }}"></script>
+{% endblock %}

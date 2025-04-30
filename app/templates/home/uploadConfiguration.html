@@ -1,0 +1,278 @@
+{% extends "layout.html" %}
+{% block title %}
+Subiendo fuente de datos
+{% endblock %}
+{% block content %}
+{% block header %}
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='styles/uploadConfiguration.css') }}">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+{% endblock %}
+
+<body>
+	<div id="alerts"></div>
+	<div class="container">
+		<div class="row align-items-start">
+			<div class="col">
+
+			</div>
+			<div style="background-color: #61A5C2; text-align:center; margin: auto;" class="col-9" id="column">
+
+				<br />
+				<h4>Por favor ingrese el nombre que tendra dicha columna (lo primero que se muestra es de ejemplo tomado
+					desde el archivo). Si no ingresa un nombre se elegirá uno por defecto.</h4>
+
+				<br />
+
+
+
+				<form>
+
+					<input type="hidden" name="filename" value="{{filename}}">
+					<h5>ingrese el nombre de la fuente de datos: </h5>
+					<input class="form-control" style=" display:inline-block; width:300px; align-self: center; "
+						type="text" name="database" required>
+					<br />
+					<br />
+
+					<h5>Ingrese el estado de la fuente de datos:</h5>
+					<select style="display: inline; width: 300px;" id="share" name="share" class="form-select" required>
+						<option selected value="publico">Público</option>
+						<option value="protegido">Protegido</option>
+						<option value="privado">Privado</option>
+					</select>
+					<button style="margin-Bottom: 3px" type="button" class="btn btn-sm btn-success"
+						data-bs-toggle="popover" title="Campo de estado de la fuente de datos"
+						data-bs-content="Público significa que todos los usuarios podran utilizar/acceder a la fuente de datos, Protegido significa que se brinda acceso a todos los usuarios que pertenezcan al mismo establecimiento educativo y Privado significa que solo el que sube la fuente de datos podra acceder a ella (a menos que sea compartido en un curso)">
+						<img class="imgBar" src="{{url_for('static', filename='info.svg') }}">
+					</button>
+					<br />
+					<br />
+
+					<div id="establismentsSection" style="display:none">
+						<h5>Elija el/los establecimientos</h5>
+						{% for establisment in establisments %}
+						<input type="checkbox" class="form-check-input"
+							id="checkboxEstablisment{{ establisment.establishment_id }}"
+							value="{{ establisment.establishment_id }}" name="establisment" multiple>
+						<label class="form-check-label" for="checkboxEstablisment{{ establisment.establishment_id }}">{{
+							establisment.nombre }}</label>
+						<br />
+
+						{% endfor %}
+					</div>
+
+					<br />
+
+					<h5>Ingrese el formato de campos de tipo fecha:</h5>
+					<select style="display: inline; width: 300px;" id="dateFormat" name="dateFormat" class="form-select"
+						required>
+						<option selected value="dd/MM/yyyy">dia/mes/año(4 numeros)</option>
+						<option value="dd-MM-yyyy">dia-mes-año(4 numeros)</option>
+						<option value="MM/dd/yyyy">mes/dia/año(4 numeros)</option>
+						<option value="MM-dd-yyyy">mes-dia-año(4 numeros)</option>
+
+						<option selected value="yyyy/dd/MM">año(4 numeros)/dia/mes</option>
+						<option value="yyyy-dd-MM">año(4 numeros)-dia-mes</option>
+						<option value="yyyy/MM/dd">año(4 numeros)/mes/dia</option>
+						<option value="yyyy-MM-dd">año(4 numeros)-mes-dia</option>
+
+						<option selected value="dd/MM/yy">dia/mes/año(2 numeros)</option>
+						<option value="dd-MM-yy">dia-mes-año(2 numeros)</option>
+						<option value="MM/dd/yy">mes/dia/año(2 numeros)</option>
+						<option value="MM-dd-yy">mes-dia-año(2 numeros)</option>
+
+						<option selected value="yy/dd/MM">año(2 numeros)/dia/mes</option>
+						<option value="yy-dd-MM">año(2 numeros)-dia-mes</option>
+						<option value="yy/MM/dd">año(2 numeros)/mes/dia</option>
+						<option value="yy-MM-dd">año(2 numeros)-mes-dia</option>
+
+					</select>
+					<br />
+					<br />
+
+					<h5>La primera fila contiene los titulos?</h5>
+					<select style="display: inline;  width: 300px;" id="headers" name="headers" class="form-select"
+						required>
+						<option selected value="si">Si</option>
+						<option value="no">No</option>
+					</select>
+					<button style="margin-Bottom: 3px" type="button" class="btn btn-sm btn-success"
+						data-bs-toggle="popover" title="La primera fila contiene títulos?"
+						data-bs-content="Responda 'si' si la primera linea del archivo contiene los titulos de cada columna y 'no' en caso contrario">
+						<img class="imgBar" src="{{url_for('static', filename='info.svg') }}">
+					</button>
+					<br />
+					<br />
+
+					<h5>Columnas del archivo</h5>
+
+					<div class="card" style="margin-left: 146px ;width: 650px ;background-color: #61A5C2;">
+
+						{% for element in firstRow %}
+
+						<div class="card"
+							style="background-color: #89C2D9 ;margin: 10px; padding: 5px; display:inline-block;">
+
+							<div style=" display:inline-block;">
+								<p style="text-align: right ;width: 285px; margin-right: 15px;">valor del ejemplo </p>
+							</div>
+							<div class="card"
+								style="margin-top: 5px; padding-left: 15px; height: 40px; display:inline-block;">
+								<p style="margin-top: 6px ;width: 285px; text-align: left;">{{element}}</p>
+							</div>
+							<br />
+							<br />
+							<div style="display:inline-block;">
+								<p style="text-align: right ;width: 285px; margin-right: 15px;">ingrese el nombre de la
+									columna: </p>
+							</div>
+							<input class="form-control column" style=" display:inline-block; width:300px" type="text"
+								name="nameColumn{{loop.index}}" required>
+						</div>
+						<br />
+
+						{% endfor %}
+
+					</div>
+
+					<br />
+					<br />
+
+					<input onclick="validateform()" style="width:200px" class="btn btn-primary" value=Finalizar>
+				</form>
+				<br />
+			</div>
+			<div class="carga d-none" id="carga"
+				style="background: url(../static/images/charge.gif) center center no-repeat">
+			</div>
+
+			<div class="col">
+
+			</div>
+		</div>
+	</div>
+
+
+	<script>
+		var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+		var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+			return new bootstrap.Popover(popoverTriggerEl)
+		})
+
+
+		function validateform() {
+
+			var array = []
+
+			$(".column").each(function (index) {
+
+				console.log($(this).val());
+				array.push($(this).val().toString())
+
+			});
+
+			var set = new Set(array);
+
+			if (set.size != array.length) {
+
+				$('#alerts').prepend(
+					'<div class="alert alert-danger alert-dismissible fade show" id="alert1" role="alert">' +
+					'<strong>Todos los nombres de las columnas deben ser distintos</strong>' +
+					'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+					'</div>'
+				)
+				$("#alert1").fadeTo(10000, 500).slideUp(500, function () {
+					$("#alert1").slideUp(500);
+				});
+
+
+
+				return false
+
+			} else {
+
+				if ($('#establismentsSection input[type=checkbox]:checked').length == 0 && $("#share").val() == 'protegido') {
+
+					$('#alerts').prepend(
+						'<div class="alert alert-danger alert-dismissible fade show" id="alert2" role="alert">' +
+						'<strong>Por favor seleccione al menos un establecimiento</strong>' +
+						'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+						'</div>'
+					)
+					$("#alert2").fadeTo(10000, 500).slideUp(500, function () {
+						$("#alert2").slideUp(500);
+					});
+
+
+					return false
+				};
+				$("#column").addClass("d-none")
+				$("#carga").removeClass("d-none")
+				const data = new FormData($("form")[0])
+				$.ajax({
+					url: "{{url_for('configurateUploadCSV')}}",
+					data: data,
+					cache: false,
+					contentType: false,
+					processData: false,
+					method: 'POST',
+					dataType: "json",
+					type: 'POST',
+					parseError: true,
+				}).done(function (data) {
+					const msg = data.message
+					window.location.href = `{{url_for('dragAndDrop')}}?message=${msg}`
+				}).fail(function (XHR, status) {
+					if (status === "timeout") {
+						const msg = "Por favor espere unos minutos e intente acceder a su fuente de datos desde el menú Fuentes de Datos"
+						$('#alerts').prepend(
+							'<div class="alert alert-warning alert-dismissible fade show" id="alert2" role="alert">' +
+							`<strong>${msg}</strong>` +
+							'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+							'</div>'
+						)
+						$("#alert2").fadeTo(10000, 500).slideUp(500, function () {
+							$("#alert2").slideUp(500);
+						});
+						return
+					}
+					const msg = JSON.parse(XHR.responseText).message
+					$("#column").removeClass("d-none")
+					$("#carga").addClass("d-none")
+
+					$('#alerts').prepend(
+						'<div class="alert alert-danger alert-dismissible fade show" id="alert2" role="alert">' +
+						`<strong>${msg}</strong>` +
+						'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+						'</div>'
+					)
+					$("#alert2").fadeTo(10000, 500).slideUp(500, function () {
+						$("#alert2").slideUp(500);
+					});
+				})
+			}
+
+
+
+
+
+
+		}
+
+		$("#share").change(function () {
+			if ($(this).val() == 'protegido') {
+				$('#establismentsSection').css('display', 'contents')
+
+			} else {
+
+				$('#establismentsSection').css('display', 'none')
+
+			}
+		});
+	</script>
+
+</body>
+
+{% endblock %}

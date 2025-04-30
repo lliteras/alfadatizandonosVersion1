@@ -1,0 +1,13 @@
+.home-img {
+  height: 30rem;
+  margin: 50px auto;
+}
+
+.home-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.home-buttons {
+  margin: 0 auto;
+}

@@ -1,0 +1,143 @@
+<!doctype html>
+<html>
+<head>
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    {% block header %} {% endblock %} 
+    <link rel="shortcut icon" href="{{url_for('static', filename='favicon.png') }}"/>
+    <style>button > a {
+      color: white
+    }</style>
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body class="vh-100">
+  {% if noNav %}
+  
+  {% else %}
+  
+  <nav class="navbar navbar-expand-lg navbar-light" style="background-color:#89C2D9">
+    <div class="container-fluid">
+            <a class="navbar-brand" href="{{url_for('home')}}">AlfaDatizandonos</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          {% if session.username %}
+
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Fuentes de datos
+            </a>
+            <ul class="dropdown-menu" style="width: 200px;" aria-labelledby="navbarDropdown">
+              <li><a class="nav-link " aria-current="page" href="{{url_for('dragAndDrop')}}">Nueva fuente de datos</a></li>
+              <li><a class="nav-link " aria-current="page" href="{{url_for('datasets_index_publics')}}">Fuentes de datos Públicas</a></li>
+
+              <li><a class="nav-link " aria-current="page" href="{{url_for('datasets_index_protecteds')}}">Fuentes de datos Protegidas</a></li>
+            {% if session['actualRole']=='professor' %}
+              <li><a class="nav-link " aria-current="page" href="{{url_for('datasets_index_privates')}}">Mis Fuentes de datos</a></li>
+            {% endif %}
+            </ul>
+          </li>
+
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Grafos sociales
+            </a>
+            <ul class="dropdown-menu" style="width: 200px;" aria-labelledby="navbarDropdown">
+              <li><a class="nav-link " aria-current="page" href="{{url_for('twitter_search')}}">Twitter (ocurrencias)</a></li>
+            </ul>
+          </li>
+           {% if session.actualRole == 'student' %}
+          <li class="nav-item">
+            <a class="nav-link " aria-current="page" href="{{url_for('activities')}}">Actividades</a>
+          </li>
+          {% endif %}          
+          {% endif %}
+          {% if session.actualRole == 'professor' %}
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Cursos</a>
+              <ul class="dropdown-menu">
+                <li class="nav-item">
+                  <a class="nav-link" href="{{url_for('courses')}}">
+                    Mis cursos
+                  </a>
+                </li>
+                <li>
+                  <a class="nav-link" href="{{url_for('new_courses')}}">
+                    Crear curso
+                  </a>
+                </li>
+              </ul>
+            </li>
+          {% endif %}
+          {% if session.actualRole == 'admin' or session.actualRole == 'superadmin'%}
+            <li class="nav-item">
+              <a class="nav-link " aria-current="page" href="{{url_for('configuration')}}">Configuración</a>
+            </li>
+          {% endif %}
+          {% if session.roles|length > 1 %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Perfil
+            </a>
+            <ul class="dropdown-menu" style="width: 200px;" aria-labelledby="navbarDropdown">
+              <li><a class="nav-link " aria-current="page" href="{{url_for('profile')}}">Ver perfil</a></li>
+              <li class="nav-link text-secondary">Ver página como:</li>
+              <li class="ml-2 nav-link text-secondary">
+                {% for roles in session.roles %}
+                <div class="form-check">
+                  <input class="form-check-input radiobuttons" type="radio" name="flexRadioDefault" id="radio{{roles}}" onclick="window.location='/changeActualRole/{{roles}}'" {% if session.actualRole == roles %} checked {% endif %}>
+                  <label class="form-check-label" for="radio{{roles}}">
+                    {% if roles=='student' %}Estudiante{% endif %}
+                    {% if roles=='professor' %}Profesor{% endif %}
+                    {% if roles=='admin' %}Admin{% endif %}
+                  </label>
+                </div>
+                {% endfor %}
+              </li>
+            </ul>
+          </li>
+          {% endif %}
+        </ul>
+
+          {% if session.username %}
+          <strong class="font-italic">Hola, {{ session.name }}</strong>&nbsp;(se encuentra trabajando como
+          {% if session.actualRole=='student' %}Estudiante{% endif %}
+          {% if session.actualRole=='professor' %}Profesor{% endif %}
+          {% if session.actualRole=='admin' %}Admin{% endif %})
+          <a class="nav-link text-dark" aria-current="page" href="{{url_for('logout')}}">Cerrar sesión</a>
+          {% endif %}
+      </div>
+    </div>
+  </nav>
+  {% endif %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" id="alert" style="margin: auto; width: 60%; " role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+      
+    {% block content %}
+    {% endblock %}
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+    <script src= "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js">
+    </script>
+    <script src= "https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js">
+    </script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>
+      $SCRIPT_ROOT = {{ request.script_root|tojson }};
+    </script>
+
+</body>
+</html>

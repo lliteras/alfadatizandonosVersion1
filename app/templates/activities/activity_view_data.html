@@ -1,0 +1,157 @@
+{% extends "layout.html" %}
+{% block title %}Actividades{% endblock %}
+{% block content %}
+<div class="container p-2" style="width: 60%;background-color: #61A5C2;" align="center">
+	<div class="container bg-white">
+		<h1 class="bg-white">{{activity.title}}</h1>
+		<p class="bg-white"><i>{{activity.description}}</i></p>
+	</div>
+	<div class="container bg-white p-2">
+		<ul class="nav nav-pills mb-3 " id="pills-tab" role="tablist">
+		  <li class="nav-item" role="presentation">
+		    <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Estado de entregas</button>
+		  </li>
+		  <li class="nav-item" role="presentation">
+		    <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Enunciado</button>
+		  </li>
+		  <li class="nav-item" role="presentation">
+		    <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Datos de actividad</button>
+		  </li>
+		</ul>
+		<div class="tab-content bg-white" id="pills-tabContent">
+		  <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+		  	<table class="table table-hover">
+			  <thead>
+			    <tr>
+			      <th scope="col">Alumno</th>
+			      <th scope="col">Estado</th>
+			      <th scope="col">Fecha de entrega</th>
+			      <th scope="col">Nota</th>
+			      <th scope="col">Ver entrega</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			  	{% for student in students %}
+			    <tr>
+			      <td>{{ student.name }} {{student.surname}}</td>
+			      <td>
+			      	{% if student.date_resolution %}
+			      		
+			      		{% if student.calification %}
+
+			      		Calificado
+
+			      		{% else %}
+
+			      			No calificado
+
+				      	{% endif %}
+	
+			      	{% else %}
+	
+			      		No entregado
+
+			      	{% endif %}
+
+			     
+			      <td>
+			      	{% if student.date_resolution %}
+
+			      		{{student.date_resolution}}
+	
+			      	{% else %}
+	
+			      		No etregado
+
+			      	{% endif %}
+			      </td>
+
+			      <td>
+			      	{% if student.date_resolution %}
+			      		
+			      		{% if student.calification %}
+
+			      		{{student.calification}}
+
+			      		{% else %}
+
+			      			No calificado
+
+				      	{% endif %}
+	
+			      	{% else %}
+	
+			      		No entregado
+
+			      	{% endif %}
+
+			      	
+			      </td>
+
+
+			      <td>
+
+			      	{% if student.date_resolution %}
+
+			      	<a class="btn btn-primary" href="{{url_for('correct_activity_view', activity_id=activity.id ,user_id=student.id)}}">Ver entrega</a>
+
+			      	{% else %}
+	
+			      		No entregado
+
+			      	{% endif %}
+
+			      </td>
+			    </tr>
+			    {% endfor %}
+			  </tbody>
+			</table>
+		  </div>
+		  <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+		  	<h5>{{activity.statement_title}}</h5>
+			<p>{{activity.statement}}</p>
+		  </div>
+		  <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
+		  	<p><i>Actividad disponible desde el <strong> {{activity.start_date.strftime('%d-%m-%y')}} </strong> hasta <strong> {{activity.end_date.strftime('%d-%m-%y')}}</strong></i></p>
+		  	<hr>
+		  	<h5>Objetivo</h5>
+		  	<span>{{activity.objective}}</span>
+		  	<hr>
+		  	<table class="table w-50">
+			  <tbody>
+			    <tr>
+			      <td>Fuente de datos</td>
+			      <td></td>
+			    </tr>
+			    <tr>
+			      <td>Gráficos disponibles</td>
+			      <td>
+			      	 {% for graph in available_graphs %}
+			      	 <span class="d-block">{{graph.spanish_name}}</span>
+			      	 {% endfor%}
+			      	 {% if activity.social_graph %}
+			      	 <span class="d-block">grafo social</span>
+			      	 {% endif %}
+			      </td>
+			    </tr>
+			  </tbody>
+			</table>
+		  	<hr>
+		  	<span>
+		  	{% if activity.has_calification %} Esta actividad posee calificación. 
+		  	{% else %}
+		  	Esta actividad no posee calificación.
+		  	{% endif %}
+		  	</span>
+		  	<span>
+		  	{% if activity.enable_expired_date %} Esta actividad permite entrega fuera de término.{% endif %}
+		  	</span>
+		  </div>
+		</div>
+	</div>
+	<script>
+		function corregir(id){
+			window.location.href = '/activities/correct/{{activity.id}}&' + id;
+		}
+	</script>
+{% endblock %}

@@ -1,0 +1,1313 @@
+{% extends "layout.html" %}
+{% block title %}
+Graficador
+{% endblock %}
+{% block content %}
+<head>
+  <meta charset="utf-8">
+  <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+  <style>
+    .imgBar {
+          width: 100px;
+          height: 100px;
+          margin-right: 5px;
+          margin-left: 5px;
+    }
+    
+    .row{
+      --bs-gutter-x: 0;
+    }
+
+    .form-check-input {
+      overflow: hidden; 
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .imageChart { 
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    /* IMAGE STYLES */
+    [type=radio] + img {
+      cursor: pointer;
+    }
+
+    /* CHECKED STYLES */
+    [type=radio]:checked + img {
+      outline: 4px solid lightgreen;
+    }
+
+  </style>
+</head>
+<body>
+
+<div id="alerts"></div>
+<div class="modal" id="modalExplanation" tabindex="-1">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Como usar el graficador:</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="carouselExampleCaptions" class="carousel carousel-dark slide" data-bs-ride="carousel" >
+          <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="3" aria-label="Slide 4"></button>
+          </div>
+          <div class="carousel-inner" style="height:100%">
+            <div class="carousel-item active" style="height:100%">
+              <img src="{{url_for('static', filename='carousel1.png') }}" class="d-block w-100" alt="...">
+              <div class="carousel-caption d-none d-md-block">
+                <h5>Primer paso</h5>
+                <p>Seleccione el tipo de gráfico a realizar</p>
+              </div>
+            </div>
+            <div class="carousel-item" style="height:100%">
+              <img src="{{url_for('static', filename='carousel2.png') }}" class="d-block w-100" alt="..." style="height:100%">
+              <div class="carousel-caption d-none d-md-block">
+                <h5>Segundo paso</h5>
+                <p>Arrastre los elementos de las columnas de la fuente de datos a Eje x/Eje y y genere las condiciones</p>
+              </div>
+            </div>
+            <div class="carousel-item" style="height:100%">
+              <img src="{{url_for('static', filename='carousel3.png') }}" class="d-block w-100" alt="..." style="height:100%">
+              <div class="carousel-caption d-none d-md-block">
+                <h5>Tercer paso</h5>
+                <p>Presione el botón "Generar gráfico"</p>
+              </div>
+            </div>
+            <div class="carousel-item" style="height:100%">
+              <img src="{{url_for('static', filename='carousel4.png') }}" class="d-block w-100" alt="..." style="height:100%">
+              <div class="carousel-caption d-none d-md-block">
+                <h5>Cuarto paso</h5>
+                <p>Observe el gráfico generado</p>
+              </div>
+            </div>
+          </div>
+
+          <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<table style="margin-top:10px;">
+  <thead>
+    <tr>
+      <th style="width:10px"></th>
+      <th style="width:290px"></th>
+      <th style="width:25px"></th>
+      <th style="width:250px"></th>
+      <th style="width:100px"></th>
+
+    </tr>
+  </thead>
+  <tr valign="top">
+    <td style="width:10px"></td>
+    <td colspan="3" class="rounded-3" style="background-color: #89C2D9; text-align: center; vertical-align: middle;">
+      <p style="text-align:left; margin-left:10px">Nombre de la fuente de datos:</p>
+      <h1>{{database.name}}</h1>
+    </td>
+
+    <td style="width:100px;"></td>
+    <td class="rounded-3" style="background-color: #89C2D9; padding: 5px;">
+      <h4><i>1 - Seleccionar gráfico</i></h4>
+      <br/>
+      {% for graph in graphs %}
+
+        <label>
+          <input class="imageChart" type="radio" id="{{graph}}" name="chart" value="{{graph}}" /><img class="imgBar" src="{{url_for('static', filename=graph+'_chart.png') }}">
+        </label>
+
+      {% endfor %}
+      
+        <!--
+        <label>
+          <input type="radio" id="data_table" name="chart" value="data_table" /><img class="imgBar" src="{{url_for('static', filename='Data_table.png') }}">
+        </label>
+        <label>
+          <input type="radio" id="bar_chart" name="chart" value="bar" /><img class="imgBar" src="{{url_for('static', filename='bar_chart.png') }}">
+        </label>
+        <label>
+          <input type="radio" id="line_chart" name="chart" value="line" /><img class="imgBar" src="{{url_for('static', filename='line_chart.png') }}">
+        </label>
+        <label>
+          <input type="radio" id="pie_chart" name="chart" value="pie" /><img class="imgBar" src="{{url_for('static', filename='pie_chart.png') }}">
+        </label>
+        <label>
+          <input type="radio" id="dot_chart" name="chart" value="dot" /><img class="imgBar" src="{{url_for('static', filename='dot_chart.png') }}">
+        </label>
+        <label>
+          <input type="radio" id="scatter_chart" name="chart" value="scatter" /><img class="imgBar" src="{{url_for('static', filename='scatter_chart.png') }}">
+        </label>
+        <label>
+          <input type="radio" id="map_chart" name="chart" value="map" /><img class="imgBar" src="{{url_for('static', filename='map_chart.png') }}">
+        </label>
+        -->       
+    </td>
+  </tr>
+  <tr style="height:20px"><td style="width:10px"></td></tr>
+
+  <tr valign="top">
+    <td style="width:10px"></td>
+    <td class="visually-hidden" id="columnsHide">
+      <h4><i>2 - Arrastrar columna a 3</i></h1>
+      <h3>Columnas de la fuente de datos</h3>
+      {% set widthCard = 279 %}
+
+      {% set columnPath = database.name %}
+      
+      {% set ns = namespace(cardId=0) %}
+      <div   class="card " style="height:682.5px; width: 290px; "> 
+        <div  name="" id="order-columns" class="card overflow-auto list-group"> 
+
+        {% macro columnsRecursion(databaseStructureRecursion, widthcardRecursion, cardId, parentId, columnPath) %}  
+
+
+
+          {% for key in databaseStructureRecursion %}
+            {% if databaseStructureRecursion[key] is mapping %}
+              </div>
+              {% if widthcardRecursion % 2 == 0 %}
+                <div class="card" style= "margin-top: -2px; background-color: #89C2D9; margin-left: 10px">
+              {% else %}
+                <div class="card" style= "margin-top: -2px; background-color: white; margin-left: 10px; margin-right: -1px;">
+              {% endif %}  
+                <h3 style= "margin-left: 10px ;">{{key}}</h3>
+
+                <div name="columns-dataset" id="box{{ns.cardId}}" class="card overflow-auto list-group" style= "margin-left: 10px ;width: {{widthcardRecursion}}px">
+                {% set ns.cardId = ns.cardId + 1 %}
+                {{columnsRecursion (databaseStructureRecursion[key], widthcardRecursion-11, ns.cardId, ns.cardId-1, columnPath+'***'+key) }}
+
+              </div>
+              
+            {%else%}
+              {% if widthcardRecursion % 2 == 0 %}
+                <div id="div{{columnPath}}***{{key}}" class="list-group-item" parentBox="box{{parentId}}" style="background-color: #89C2D9;">{{key}}
+              {% else %}
+                <div id="div{{columnPath}}***{{key}}" class="list-group-item" parentBox="box{{parentId}}" style="background-color: white;">{{key}}
+              {% endif %}  
+              
+                <input type="hidden" id="{{columnPath}}***{{key}}" type="text" name="{{key}}" columnType="{{databaseStructureRecursion[key]}}"  value="{{columnPath}}***{{key}}">
+                
+
+              </div>
+            {% endif %}
+          {% endfor %}
+
+        {%- endmacro %}
+
+        {% for key in databaseStructure %}
+          {% if databaseStructure[key] is mapping %}
+            
+            </div>
+            <h3 style= "margin-left: 10px ;">{{key}}</h3>
+            
+            <div id="box{{ns.cardId}}" name="columns-dataset" class="card overflow-auto list-group" style= "margin-left: 10px ;width: {{widthCard}}px">
+              {% set ns.cardId = ns.cardId + 1 %}
+              {{columnsRecursion (databaseStructure[key], widthCard-11, ns.cardId, 0, columnPath+'***'+key) }}
+              
+          {%else%}
+            <div class="list-group-item" id="div{{columnPath}}***{{key}}" parentBox="order-columns">{{key}}
+              <input type="hidden" id="{{columnPath}}***{{key}}" type="text" name="columnOfDataSet" columnType="{{databaseStructure[key]}}"  value="{{columnPath}}***{{key}}">
+              
+
+            </div>
+          {% endif %}
+        {% endfor %}
+        
+
+
+      </div>    
+    </div>
+
+    </td>
+    <td style="width:25px;"></td>
+    <td class="visually-hidden" id="columnsSelectedAndCondition">
+       <h4><i>3 - Configurar gráfico</i></h3>
+        <h3 id="x_axi_title">Eje X</h3>
+        <div  id="order-axi-x" class="card overflow-auto list-group" style="height:140px ; width: 250px;">
+        </div>
+        <div id="modificatorX" style="visibility: hidden;">
+
+          <div id="acumulativeX" style="display: none; margin-top: 10px;">
+            <input class="form-check-input" type="checkbox" value="" id="acumulativeXCheckBox" name="acumulativeXCheckBox" checked>
+              <label class="form-check-label" for="acumulativeXCheckBox">
+                Acumulativo
+              </label>
+            
+          </div>
+
+          <div id="divDispersionX" style="visibility: hidden;">
+            <label style="margin-right: 10px;" for="dispersionX">Dispersión en eje X: </label><output id="dispersionYOutput">0.5</output>
+            <input  id="dispersionX" name="dispersionX" type='range' min='0' max='1' step='.05' value='0.5' oninput="this.previousElementSibling.value = this.value"/>  
+          </div>
+        </div>
+        
+        <div style="height:190px ">
+          <div style= "" id="container-order-y">
+            <h3 id="y_axi_title">Eje Y</h3>
+            <div  id="order-axi-y" class="card overflow-auto list-group" style="height:140px ; width: 250px;">
+            </div>
+          </div>
+        </div>
+        <div id="divDispersionY" style="visibility: hidden;">
+          <label style="margin-right: 10px;" for="dispersionY">Dispersión en eje Y: </label><output id="dispersionYOutput">0.5</output>
+          <input  id="dispersionY" name="dispersionY" type='range' min='0' max='1' step='.05' value='0.5' oninput="this.previousElementSibling.value = this.value"/>
+        </div>
+        <h3>Condiciones</h3>
+        <div  id="order-conditions" class="card overflow-auto list-group" style="height:140px ; width: 250px;">
+        </div>
+        <br/>
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+          Agregar Condición
+        </button>
+    </td>
+    <td style="width:100px;"></td>
+    <td>
+      <div  class="card" style="height:722.5px; width: 1000px; ">
+        <h4><i>4 - Graficar</i></h4><button class="btn btn-primary" id="buttonGenerateChart" disabled style="margin-left: 10px; width: 200px;" onclick="GenerateChart()">Generar gráfico</button> 
+       <iframe id="iframe" name="iframe" src="" height="700" width="1000"></iframe>  
+    </td>  
+  </tr>
+</table>
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <form id="formCondition">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Genere el filtro siguiendo los pasos</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          
+          <h4>1. Seleccione la columna por la que quiere filtrar:</h4>
+          {% macro columnsConditionRecursion(databaseStructureRecursion, columnPath) %}  
+
+
+
+            {% for key in databaseStructureRecursion %}
+              {% if databaseStructureRecursion[key] is mapping %}
+                
+                <br/>
+                <h5>Variables del objeto {{key}}:</h5>
+                {{columnsConditionRecursion (databaseStructureRecursion[key], columnPath+'***'+key) }}
+                  
+              {%else%}
+              <div class="form-check">
+                <label class="form-check-label">
+                  <input class="form-check-input" type="radio" name="columnModal" id="{{key}}ModalId" value="{{columnPath}}***{{key}}" columnType="{{databaseStructureRecursion[key]}}" required="required">
+                    {{key}}
+                </label>
+              </div>
+              {% endif %}
+            {% endfor %}
+
+          {%- endmacro %}
+
+          {% for key in databaseStructure %}
+            {% if databaseStructure[key] is mapping %}
+              
+              <br/>
+              <h5>Variables del objeto {{key}}:</h5>
+              {{columnsConditionRecursion (databaseStructure[key], columnPath+'***'+key) }}
+                
+            {%else%}
+            <div class="form-check">
+                <label class="form-check-label">
+                  <input class="form-check-input" type="radio" name="columnModal" id="{{key}}ModalId" value="{{columnPath}}***{{key}}" columnType="{{databaseStructure[key]}}" required="required">
+                    {{key}}
+                </label>
+              </div>
+            
+            {% endif %}
+          {% endfor %}
+          
+
+          <br/>  
+          <div class="visually-hidden" id='secondStepCondition'>
+            <h4>2. Seleccione el criterio para filtrar la columna seleccionada: </h4>
+              <div class="form-check" id="includeDiv" style="visibility: hidden;">
+                <input class="form-check-input" type="radio" name="columnCondition" id="include" value="include" required="required">
+                <label class="form-check-label" for="columnCondition">
+                  Incluir
+                </label>
+              </div>
+              <div class="form-check" id="excludeDiv" style="visibility: hidden;">
+                <input class="form-check-input" type="radio" name="columnCondition" id="exclude" value="exclude" required="required">
+                <label class="form-check-label" for="columnCondition">
+                  Excluir
+                </label>
+              </div>
+              <div class="form-check" id="likeDiv" style="visibility: hidden;">
+                <input class="form-check-input" type="radio" name="columnCondition" id="like" value="like" required="required">
+                <label class="form-check-label" for="columnCondition">
+                  Similar a la palabra
+                </label>
+              </div>
+              <div class="form-check" id="higherDiv" style="visibility: hidden;">
+                <input class="form-check-input" type="radio" name="columnCondition" id="higher" value="higher" required="required">
+                <label class="form-check-label" for="columnCondition">
+                  Mayor que
+                </label>
+              </div>
+              <div class="form-check" id="lowerDiv" style="visibility: hidden;">
+                <input class="form-check-input" type="radio" name="columnCondition" id="lower" value="lower" required="required">
+                <label class="form-check-label" for="columnCondition">
+                  Menor que
+                </label>
+              </div>
+              <div class="form-check" id="betweenDiv" style="visibility: hidden;">
+                <input class="form-check-input" type="radio" name="columnCondition" id="between" value="between" required="required">
+                <label class="form-check-label" for="columnCondition">
+                  Dentro del rango
+                </label>
+              </div>
+            </div>
+            
+          <div class="visually-hidden" id="thirdStepCondition">  
+            <h4>3. Ingrese/seleccione el valor o los valores para el criterio de filtrado: </h4>
+
+
+            <div class="mb-3">
+              <input style="width: 300px  ;display: none;" name="inputConditon" type="date" id="inputCondition" class="form-control">
+            </div>          
+            
+            <div class="mb-3">
+              <label for="inputSearchCheckBox" class="form-label" style="display:none;" id=filterConditionText>Filtro:</label>
+              <input style="width: 300px  ;display: none;" name="inputConditon" type="text" id="inputSearchCheckBox" class="form-control">
+            </div>  
+
+            <div class="mb-3">
+              <label for="inputEnd" class="form-label" style="display: none;" id="label-from">Desde: </label>
+              <input style="width: 300px  ;display: none;" name="inputConditon" type="date" id="inputStart" class="form-control">
+            </div>
+
+            <div class="mb-3">
+              <label for="inputEnd" class="form-label" style="display: none;" id="label-to">Hasta: </label>
+              <input style="width: 300px  ;display: none;" name="inputConditon" type="date" id="inputEnd" class="form-control">
+            </div>
+
+            <div class="card overflow-auto" style="height:200px; width: 400px; display: none;" id="card-include-exclude">
+              <div style="vertical-align: middle;" class="form-check" id="optionContainer">
+
+              </div>            
+            
+            </div>  
+          </div>
+          
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <input type="submit" class="btn btn-primary" name="submit" onclick="generateCondition()" value="Agregar">
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+     
+
+<script>
+
+
+  //when the page loads it puts the input radios without a marked option
+  $( document ).ready(function() {
+
+    observerX.observe(targetNodeX, config);  
+    observerY.observe(targetNodeY, config);
+
+    if ($('[name=columns-dataset]').length == 0){
+      observer.observe(document.getElementById('order-columns'), config);
+
+
+    }else{
+      $('[name=columns-dataset]').each(function(index) {
+
+        observer.observe(document.getElementById($(this).attr('id')),config);
+
+      });
+
+    }
+
+    
+
+
+    $("input[type=radio][name=chart]").prop('checked', false);
+    $("input[type=radio][name=columnModal]").prop('checked', false);
+    $("input[type=radio][name=columnCondition]").prop('checked', false);
+    $('#modalExplanation').modal('toggle');
+
+    
+
+
+
+  });
+
+
+  //with this code the submit input of the #formCondition dont refresh the page
+  $('#formCondition').submit(function () {
+   return false;
+  });
+
+  
+  //this is triggered when the option of the radio chart is changed
+  $('input:radio[name="chart"]').change(function(){
+
+    $('#columnsHide').removeClass('visually-hidden');
+    $('#columnsSelectedAndCondition').removeClass('visually-hidden');
+    $('#buttonGenerateChart').prop('disabled', true);
+    
+    //
+
+    hideIFrame()
+    
+    $('#x_axi_title').text('Eje x');
+    $('#y_axi_title').text('Eje y');
+
+    if($(this).val() == 'bar' || $(this).val() == 'line' || $(this).val() == 'pie'  ){
+
+      //hide the "Eje y" Box 
+      $("#container-order-y").css("display", "none"); 
+
+    } else {
+
+      //show the "Eje y" Box
+      $("#container-order-y").css("display", "contents"); 
+
+      if ($(this).val() == 'map') {
+        
+        $('#x_axi_title').text('Latitud');
+        $('#y_axi_title').text('Longitud');
+
+      }
+      else{
+        if ($(this).val() == 'data_table') {
+          $('#x_axi_title').text('Columna');
+          $('#y_axi_title').text('Fila');
+        }
+      }
+
+    }
+
+    if ($(this).val() == 'scatter'){
+      $("#divDispersionX").css("visibility", "visible");
+      $("#divDispersionY").css("visibility", "visible");
+      $("#modificatorX").css("visibility", "visible");
+      $("#acumulativeX").css("display", "none");
+    }
+    else{
+      if ($(this).val() == 'line'){
+        $("#divDispersionY").css("visibility", "hidden");
+        $("#divDispersionX").css("visibility", "hidden");
+        $("#modificatorX").css("visibility", "visible");
+        $("#acumulativeX").css("display", "contents");
+      }
+      else{
+
+        $("#divDispersionY").css("visibility", "hidden");
+        $("#divDispersionX").css("visibility", "hidden");
+        $("#modificatorX").css("visibility", "hidden");
+        $("#acumulativeX").css("display", "none");
+      }
+     
+    }
+
+
+    //clear the "Eje X" and "Eje y" Box and put the columns in the "Columnas del dataset" Box
+    $('#order-axi-x .list-group-item').each(function(index){
+      var column = $(this).clone();
+      var parentBox = $(this).attr('parentBox');
+      $('#'+parentBox).append(column);
+      $(this).remove();
+    });
+    $('#order-axi-y .list-group-item').each(function(index){
+      var column = $(this).clone();
+      var parentBox = $(this).attr('parentBox');
+      $('#'+parentBox).append(column);
+      $(this).remove();
+    });
+
+
+  });
+
+  //generate the url for the chart needed 
+  function GenerateChart() {
+    
+    //iframe
+    var iframe = $('#iframe')[0];
+    
+    //src iframe string
+    var src = "/"
+
+    console.log($('#order-axi-x').children(0).children(0).attr('columnType') == 'date')
+
+    if (!$('input:radio[name="chart"]:checked').val()) {
+       
+      $('#alerts').prepend(
+        '<div class="alert alert-danger alert-dismissible fade show" id="alert1" role="alert">'+
+          '<strong>Por favor seleccione un tipo de grafico primero</strong>'+
+          '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'+
+        '</div>'
+        )
+      $("#alert1").fadeTo(10000, 500).slideUp(500, function(){
+          $("#alert1").slideUp(500);
+      });
+    }
+
+    else {
+      //get the value of the selection of the chart radio
+      selection = $('input:radio[name="chart"]:checked').val().toString();
+
+      if ($('#order-axi-x').children(0).length == 0){
+        $('#alerts').prepend(
+        '<div class="alert alert-danger alert-dismissible fade show" id="alert2" role="alert">'+
+          '<strong>Por favor elija una columna por la cual graficar</strong>'+
+          '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'+
+        '</div>'
+        )
+        $("#alert2").fadeTo(10000, 500).slideUp(500, function(){
+          $("#alert2").slideUp(500);
+        });
+      }
+
+      else{
+
+
+
+        //bar chart
+        if(selection == 'bar'){
+          //add the start of the url and the database parameter
+          src = src + "graphBar/{{database.name}}&";
+
+          //add the axi x parameter
+          src = src + $('#order-axi-x').children(0).children(0).prop('value');
+
+
+        } else {
+
+          //line chart
+          if (selection == 'line') {
+
+            if ($('#order-axi-x').children(0).children(0).attr('columnType') != 'date'){
+
+              $('#alerts').prepend(
+                '<div class="alert alert-danger alert-dismissible fade show" id="alert3" role="alert">'+
+                  '<strong>la columna elegida debe ser de tipo fecha</strong>'+
+                  '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'+
+                '</div>'
+                )
+              $("#alert3").fadeTo(10000, 500).slideUp(500, function(){
+                  $("#alert3").slideUp(500);
+              });
+
+
+              return true
+
+            }
+
+            //add the start of the url and the database parameter
+            src = "/graphLine/{{database.name}}&";
+
+            //add the axi x parameter
+            src = src + $('#order-axi-x').children(0).children(0).prop('value');
+
+            if ($('#acumulativeXCheckBox').is(':checked')) {
+              src = src + '&' + '1';
+            }  
+            else{
+              src = src + '&' + '0';
+            }
+
+
+          }
+          else{
+
+            //data table
+            if (selection == 'data_table') {
+
+              //add the start of the url and the database parameter
+              src = "/dataTable/{{database.name}}&";
+
+              //add the axi x parameter
+              src = src + $('#order-axi-x').children(0).children(0).prop('value') + "&";
+              
+              //add the axi y parameter
+              src = src + $('#order-axi-y').children(0).children(0).prop('value');
+            }
+            else{
+
+              //pie chart
+              if (selection == 'pie') {
+
+                //add the start of the url and the database parameter
+                src = "/pieChart/{{database.name}}&"
+
+                //add the axi x parameter
+                src = src + $('#order-axi-x').children(0).children(0).prop('value');
+              }
+
+              else{
+                
+                if (selection == 'dot'){
+
+                  //add the start of the url and the database parameter
+                  src = "/dotChart/{{database.name}}&";
+
+                  //add the axi x parameter
+                  src = src + $('#order-axi-x').children(0).children(0).prop('value') + "&";
+                  
+                  //add the axi y parameter
+                  src = src + $('#order-axi-y').children(0).children(0).prop('value');
+
+                }
+
+                else{
+                  if (selection == 'scatter') {
+                    //add the start of the url and the database parameter
+                    src = "/scatterChart/{{database.name}}&";
+
+                    //add the axi x parameter
+                    src = src + $('#order-axi-x').children(0).children(0).prop('value') + "&";
+                    
+                    //add the axi y parameter
+                    src = src + $('#order-axi-y').children(0).children(0).prop('value')+ "&";
+
+                    src = src + $('#dispersionX').val().toString() + "&";
+
+                    src = src + $('#dispersionY').val().toString();
+                  }
+                  else{
+                    if (selection == 'map') {
+
+                      if ($('#order-axi-y').children(0).length == 0){
+                        $('#alerts').prepend(
+                        '<div class="alert alert-danger alert-dismissible fade show" id="alert4" role="alert">'+
+                          '<strong>Por favor elija una columna para agregar en Longitud </strong>'+
+                          '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'+
+                        '</div>'
+                        )
+                        $("#alert4").fadeTo(10000, 500).slideUp(500, function(){
+                            $("#alert4").slideUp(500);
+                        });
+
+                        return true
+                      }
+
+                      if ($('#order-axi-x').children(0).children(0).attr('columnType') != 'NUMERIC (16, 10)'){
+
+                        $('#alerts').prepend(
+                          '<div class="alert alert-danger alert-dismissible fade show" id="alert5" role="alert">'+
+                            '<strong>la columna elegida  como latitud debe ser de tipo numero con decimales</strong>'+
+                            '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'+
+                          '</div>'
+                          )
+                        $("#alert5").fadeTo(10000, 500).slideUp(500, function(){
+                            $("#alert5").slideUp(500);
+                        });
+
+
+                        return true
+
+                      }
+
+                      if ($('#order-axi-y').children(0).children(0).attr('columnType') != 'NUMERIC (16, 10)'){
+
+                        $('#alerts').prepend(
+                          '<div class="alert alert-danger alert-dismissible fade show" id="alert6" role="alert">'+
+                            '<strong>la columna elegida  como Longitud debe ser de tipo numero con decimales</strong>'+
+                            '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'+
+                          '</div>'
+                          )
+                        $("#alert6").fadeTo(10000, 500).slideUp(500, function(){
+                            $("#alert6").slideUp(500);
+                        });
+
+
+                        return true
+
+                      }
+
+
+
+
+                      //add the start of the url and the database parameter
+                      src = "/mapChart/{{database.name}}&";
+
+                      //add the axi x parameter
+                      src = src + $('#order-axi-x').children(0).children(0).prop('value') + "&";
+                      
+                      //add the axi y parameter
+                      src = src + $('#order-axi-y').children(0).children(0).prop('value');
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        //add the conditions to the url
+        var conditions = $("#order-conditions");
+          
+          //check if there are any conditions
+          if (conditions.children(0).length > 0) {
+            
+            //String where the conditions the conditions are loaded
+            var stringConditions = '';
+            
+            //loop through the conditions
+            $('[name=condition]').each(function(index) {
+
+              //add the condition and the separator "$$$"
+              stringConditions = stringConditions + $(this).children(0)[2].value + '~~~';
+            });
+
+            //delete the las separator "$$$"
+            src = src + '&' + (stringConditions.slice(0, -3));
+
+            
+          }  
+
+        //set the url to the iframe
+        iframe.src = src
+
+        //reload the iframe
+        //iframe.contentWindow.location.reload(true);
+        document.getElementById('iframe').src = document.getElementById('iframe').src;
+        
+        $( "#iframe" ).css("opacity", 100);
+
+        //window.frames['some_frame_id'].location.href.reload()
+      }
+    }
+  }
+
+
+  //Method triggered when a "columna" is selected in the "agregar condicion" modal
+  $('input:radio[name="columnModal"]').change(function() {
+
+    $('#secondStepCondition').removeClass('visually-hidden');
+    $('#thirdStepCondition').addClass('visually-hidden');
+    
+    
+    //hide the "valor" box
+    $("#card-include-exclude").css("display", "none"); 
+    
+    //clear the "valor" box
+    $( "#optionContainer" ).empty();
+
+    //hide the number/date input and the labels
+    $("#inputCondition").css("display", "none"); 
+    $("#inputStart").css("display", "none"); 
+    $("#inputEnd").css("display", "none"); 
+    $("#label-from").css("display", "none");
+    $("#label-to").css("display", "none");
+
+    //uncheck the radio "accion" 
+    $("input[type=radio][name=columnCondition]").prop('checked', false);
+
+
+    //check if the column selected type is date or number to show the options "mayor que", "menor que" and "dentro del rango" in the "accion" radio
+    if ($(this).attr('columnType') == 'date' || $(this).attr('columnType')== 'int') { 
+
+
+      /*$("#label-higher").css("display", "contents"); 
+      $("#label-lower").css("display", "contents"); 
+      $("#label-between").css("display", "contents");*/
+
+      $("#betweenDiv").css("visibility", "visible");
+      $("#higherDiv").css("visibility", "visible"); 
+      $("#lowerDiv").css("visibility", "visible");
+
+      $("#likeDiv").css("visibility", "hidden");  
+
+     
+
+
+
+      //set the type of the input (date or number)
+      if ($(this).attr('columnType') == 'date') {
+
+        $("#inputCondition").attr('type', 'date');
+        $("#inputStart").attr('type', 'date');
+        $("#inputEnd").attr('type', 'date');
+
+      } else{
+
+        if ($(this).attr('columnType') == 'int') {
+
+          $("#inputCondition").attr('type', 'number');
+          $("#inputStart").attr('type', 'number');
+          $("#inputEnd").attr('type', 'number');        
+
+        }
+        else{
+          if ($(this).attr('columnType') == 'varchar(255)') {
+
+            $("#inputCondition").attr('type', 'text');
+          } 
+        }
+      }
+    }
+
+    else{
+      $("#betweenDiv").css("visibility", "hidden");
+      $("#higherDiv").css("visibility", "hidden"); 
+      $("#lowerDiv").css("visibility", "hidden"); 
+
+
+      if ($(this).attr('columnType') == 'varchar(255)') {
+
+        $("#inputCondition").attr('type', 'text');
+      }
+
+      $("#likeDiv").css("visibility", "visible"); 
+
+      /*$("#label-higher").css("display", "none"); 
+      $("#label-lower").css("display", "none"); 
+      $("#label-between").css("display", "none"); */
+    }
+
+    //show the options "incluir" and "excluir" in the "accion" radio
+    
+
+    $("#includeDiv").css("visibility", "visible");
+    $("#excludeDiv").css("visibility", "visible"); 
+    
+    /*$("#label-include").css("display", "contents");
+    $("#label-exclude").css("display", "contents");*/
+    
+  });
+
+  //Method triggered when a "accion" is selected in the "agregar condicion" modal
+  $('input:radio[name="columnCondition"]').change(function() {
+
+    $('#thirdStepCondition').removeClass('visually-hidden');
+    $( "#inputSearchCheckBox" ).css("display", "contents");
+    $( "#filterConditionText" ).css("display", "none");
+    
+    //check if the option selected is "incluir" or "excluir", if true:   
+    if ($(this).val() == 'include' || $(this).val() == 'exclude' ) {
+
+      //hide the number/date input and the labels
+      $("#inputCondition").css("display", "none"); 
+      $("#inputStart").css("display", "none"); 
+      $("#inputEnd").css("display", "none"); 
+      $("#label-from").css("display", "none");
+      $("#label-to").css("display", "none");
+
+      $( "#filterConditionText" ).css("display", "");
+      $("#inputSearchCheckBox").css("display", "");
+
+
+      //show the "valor" box
+      $("#card-include-exclude").css("display", ""); 
+
+      //clear the "valor" box
+      $( "#optionContainer" ).empty();
+
+      //load the values of the "columna" in the "valor" box
+      $.getJSON($SCRIPT_ROOT + 'ajax/{{database.name}}&' + $('input:radio[name="columnModal"]:checked').val() , {
+        }, function(data) {
+
+          //load the HTML in the "valor" box
+          for (var i =  0; i < data.result.length; i++) {
+            $( "#optionContainer" ).append("<input class=\"form-check-input form-card\"  type=\"checkbox\" value=\"" + data.result[i][0] + "\">" + "<label class=\"form-check-label\" for=\"flexCheckDefault\">"  + data.result[i][0] + "</label><br/>");  
+          }
+        });
+      return false;
+
+    } 
+
+    //check if the option selected is "incluir" or "excluir", if false:
+    else{
+
+      //hide the "valor" box
+      $("#card-include-exclude").css("display", "none"); 
+      
+      //clear the  "valor" box
+      $( "#optionContainer" ).empty();
+
+      //check if the option selected is "mayor que" or "menor que", if true:
+      if ($(this).val() == 'higher' || $(this).val() == 'lower' || $(this).val() == 'like') {
+
+        //show the number/date input and the labels of the input
+        $("#inputCondition").css("display", ""); 
+        $("#inputStart").css("display", "none"); 
+        $("#inputEnd").css("display", "none");
+        $("#label-from").css("display", "none");
+        $("#label-to").css("display", "none");
+      
+      } 
+
+      //check if the option selected is "mayor que" or "menor que", if false:
+      else{
+
+        //check if the option selected is "dentro del rango", if false:
+        if ($(this).val() == 'between') {
+
+          //show the number/date input and the labels of the start input and end input of the range
+          $("#inputCondition").css("display", "none"); 
+          $("#inputStart").css("display", ""); 
+          $("#inputEnd").css("display", "");
+          $("#label-from").css("display", "contents");
+          $("#label-to").css("display", "contents");
+        }
+
+      } 
+
+    }
+
+  });
+
+
+
+  
+
+  $( "#inputSearchCheckBox" ).on("input", function() {
+    var valueOfSearch = $(this).val(); 
+    $('.form-card').each(function(index) {
+      var valueOfCheckBox = $(this).val();
+      if (valueOfCheckBox.includes(valueOfSearch)) {
+        $(this).css("display", "");
+        $(this).next().css("display", "");
+        $(this).next().next().css("display", "");
+
+      }else{
+        $(this).css("display", "none");
+        $(this).next().css("display", "none");
+        $(this).next().next().css("display", "none");
+      }
+
+    });
+    
+  });
+
+
+  //var used to make the id of each condition generated (it id is needed to delete the condition if it es needed)
+  var cant = 0;
+
+  //method triggered when the button "agregar" inside the modal "agregar condicion" is pushed
+  function generateCondition(){
+
+    hideIFrame()
+
+    //array where will be the conditions when the selected option is "incluir" or "excluir" 
+    var conditions = [];
+
+    //string condition
+    var condition = '';
+
+    //get the value of the radio 'columna'
+    var column = $('input:radio[name="columnModal"]:checked').val().toString();
+
+    //loop through the checked options in the 'valor' box
+    $('.form-card:checked').each(function() {
+
+      
+      
+      //clear the condition string
+      condition = '';
+
+      //add the 'columna' to the condition
+      condition = condition + column;
+
+      //if the action is include
+      if ($('input:radio[name="columnCondition"]:checked').val() == 'include') {
+        
+        //add ' = ' to the string condition 
+        condition = condition + ' = ';
+      }else{
+
+        //add ' != ' to the string condition
+        condition = condition + ' != ';
+      }
+
+      //add the value of the checked option (each one per loop)
+      condition = condition + "\'" + $(this).attr('value') + "\'" ;
+      
+      //push the condition to the array
+      conditions.push(condition);
+    });
+
+    //if there are no conditions in the conditions array it means that the 'accion' check is not 'incluir' or 'excluir' 
+    if (conditions.length == 0) {
+     
+      //if the input used in the 'mayor que' and 'menor que' options is visible it means that one of them has been selected 
+      if ($('#inputCondition').css("display") == 'block') { 
+
+        ////add the 'columna' to the condition
+        condition = condition + column;
+
+        if ($('input:radio[name="columnCondition"]:checked').val() == "like") {
+
+          condition = condition + " like \'%" +$('#inputCondition').val() + "%\'";
+
+          conditionToShow = column.split('***').pop() + " parecido a : \'" +$('#inputCondition').val() + "\'";
+
+        }
+
+        else{  
+                
+
+          if ($('input:radio[name="columnCondition"]:checked').val() == "higher") {
+          
+            //add ' >= ' to the string condition
+            condition = condition + ' >= ';
+          
+          }else{
+          
+              //add ' <= ' to the string condition
+              condition = condition + ' <= ';
+          }
+        
+
+          //add the value of the input to the string
+          condition = condition + "\'" +$('#inputCondition').val() + "\'"; 
+        
+        }
+
+        //push the condition to the array
+        conditions.push(condition);
+        
+
+      } 
+
+      //the 'accion' selected is 'dentro del rango'
+      else {
+
+        var colValue = column.split('***');
+        colValue = colValue[(colValue.length)-1];
+
+        conditionToShow = condition + colValue + " >= "+ "\'" +$('#inputStart').val() + "\' y " + colValue + " <= \'" +$('#inputEnd').val() + "\'";  
+
+        //add the 'columna' and the '>=' to the condition
+        condition = condition + column + " >= ";
+
+        //add the value of the input + the 'columna' + '<=' + the value of the end input
+        condition = condition + "\'" +$('#inputStart').val() + "\' and " + column + " <= \'" +$('#inputEnd').val() + "\'"; 
+
+        //push the condition to the array
+        conditions.push(condition);
+
+      }
+
+    
+    }
+
+    //append the html of the conditions to the 
+    for (condition of conditions){
+      var divId = 'cond'+cant.toString();
+      if ($('input:radio[name="columnCondition"]:checked').val() == 'between' || $('input:radio[name="columnCondition"]:checked').val() == 'like') {
+        $( "#order-conditions" ).append(
+            "<div style=\"min-height:45px\" class=\"list-group-item\" id=\""+divId+"\" name=\"condition\">"+
+              "<span style=\"width: 180px; display: block;\">"+conditionToShow+"</span>"+
+              " <button class=\" btn btn-danger \" onclick=\"deleteCondition(\'"+divId+"\')\" style=\"height 35px; width:40px; top: 50%;position: absolute;right: .5em;transform:translateY(-50%);\"><img style=\"margin-left: -2px;vertical-align: middle; width: 20px; height: 20px;\" src=\"{{url_for('static', filename='trash.svg') }}\"/></button>"+
+              " <input type=\"hidden\" id=\""+condition+"\" type=\"text\" name=\""+condition+"\" value=\""+condition+"\">"+
+            "</div>");  
+      } 
+      else {
+        $( "#order-conditions" ).append(
+            "<div class=\"list-group-item\" id=\""+divId+"\" name=\"condition\">"+
+              "<span style=\"width: 180px; display: block;\">"+condition.split('***').pop()+"</span>"+
+              " <button class=\" btn btn-danger \" onclick=\"deleteCondition(\'"+divId+"\')\" style=\"height 35px; width:40px; top: 50%;position: absolute;right: .5em;transform:translateY(-50%);\"><img style=\"margin-left: -2px;vertical-align: middle; width: 20px; height: 20px;\" src=\"{{url_for('static', filename='trash.svg') }}\"/></button>"+
+              " <input type=\"hidden\" id=\""+condition+"\" type=\"text\" name=\""+condition+"\" value=\""+condition+"\">"+
+            "</div>"); 
+      }
+      cant = cant + 1;
+    }
+
+    $('#staticBackdrop').modal('toggle'); 
+    $('input:radio[name="columnModal"]:checked').prop('checked', false);
+    $('#secondStepCondition').addClass('visually-hidden');
+    $('#thirdStepCondition').addClass('visually-hidden');
+
+  }
+
+  //remove the condition
+  function deleteCondition(condition){
+    $( "#"+condition ).remove();
+    hideIFrame()
+  }
+
+  //remove the condition
+  function hideIFrame(){
+    $( "#iframe" ).css("opacity", 0);
+  }  
+
+  //OBSERVER
+  // Select the node that will be observed for mutations
+  const targetNodeX = document.getElementById('order-axi-x');
+  const targetNodeY = document.getElementById('order-axi-y');
+
+  // Options for the observer (which mutations to observe)
+  const config = { attributes: true, childList: false, subtree: true };
+
+  // Callback function to execute when mutations are observed
+  const callbackX = function(mutationsList, observer) {
+
+      for(const mutation of mutationsList) {
+          if (mutation.type === 'childList') {
+              
+          }
+          else if (mutation.type === 'attributes') {
+              if (mutation.attributeName == 'draggable') {
+
+                if ($("#order-axi-x > .list-group-item").length > 0 ){
+                  $('#buttonGenerateChart').prop('disabled', false);;
+                }
+
+                
+                //this move last element dropped in the 'eje x' box if there is already one inside of it to the 'columnas' box
+                $("#order-axi-x > .list-group-item").each(function(index){
+                  hideIFrame()
+                  if(index > 0 && ! $(this).prop('draggable')){
+                    var column = $(this).clone();
+                    var parentBox = $(this).attr('parentBox');
+                    $('#'+parentBox).append(column);
+                    $(this).remove();
+                  }
+                });
+              }
+          }
+      }
+  };
+
+  // Callback function to execute when mutations are observed
+  const callbackY = function(mutationsList, observer) {
+
+      for(const mutation of mutationsList) {
+          if (mutation.type === 'childList') {
+              
+          }
+          else if (mutation.type === 'attributes') {
+              if (mutation.attributeName == 'draggable') {
+
+                if ($("#order-axi-x > .list-group-item").length == 0 ){
+                      $('#buttonGenerateChart').prop('disabled', true);;
+                    }
+                
+                //this move last element dropped in the 'eje y' box if there is already one inside of it to the 'columnas' box
+                $("#order-axi-y > .list-group-item").each(function(index){
+                  hideIFrame()
+                  if(index > 0 && ! $(this).prop('draggable')){
+                    var column = $(this).clone();
+                    var parentBox = $(this).attr('parentBox');
+                    $('#'+parentBox).append(column);
+                    $(this).remove();
+                  }
+                });
+              }
+          }
+      }
+  };
+
+  // Callback function to execute when mutations are observed
+  const callback = function(mutationsList, observer) {
+
+      for(const mutation of mutationsList) {
+          if (mutation.type === 'childList') {
+              //console.log('A child node has been added or removed.');
+              
+          }
+          else if (mutation.type === 'attributes') {
+              //console.log('The ' + mutation.attributeName + ' attribute was modified.');
+              if (mutation.attributeName == 'draggable') {
+                var id = (mutation.target).id;
+
+                if ($("#order-axi-x > .list-group-item").length == 0 ){
+                      $('#buttonGenerateChart').prop('disabled', true);
+                    }
+                
+                if(!((mutation.target).draggable)){
+
+                    
+
+
+                    var column = document.getElementById(id);
+                    var columnClone = column.cloneNode(true);
+                    column.remove();
+                    var parentBox = (mutation.target).getAttribute('parentBox');
+                    document.getElementById(parentBox).appendChild(columnClone);
+                    column.remove();
+                }
+                
+              }
+          }
+      }
+  };
+
+
+  // Create an observer instance linked to the callback function
+  const observerX = new MutationObserver(callbackX);
+  const observerY = new MutationObserver(callbackY);
+  const observer = new MutationObserver(callback);
+
+
+
+
+</script>
+
+<script src="{{url_for('static', filename='/scripts/Sortable.js') }}"></script>
+
+<script>
+
+  $('[name="columns-dataset"]').each(function(index) {
+
+      new Sortable(document.getElementById('box'+index.toString()),{
+        group: 'shared',
+        animation: 150,
+        ghostClass: 'bg-info'
+      })
+    });
+
+  new Sortable(document.getElementById('order-columns'),{
+    group: 'shared',
+    animation: 150,
+    ghostClass: 'bg-info'
+  })
+
+  /*for (var i = 0; i < {{ns.cardId}}; i++) {
+    new Sortable('column'+i.toString(), {
+      group: 'nested',
+      filter: '.filtered',
+      animation: 150,
+      fallbackOnBody: true,
+      swapThreshold: 0.65
+    });
+  }*/
+  new Sortable(document.getElementById('order-axi-x'),{
+    group: 'shared',
+    animation: 150,
+    ghostClass: 'bg-info'
+  })
+  new Sortable(document.getElementById('order-axi-y'),{
+    group: 'shared',
+    animation: 150,
+    ghostClass: 'bg-info'
+  })
+</script>
+ 
+</body>
+{% endblock %}

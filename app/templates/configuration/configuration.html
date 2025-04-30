@@ -1,0 +1,252 @@
+{% extends "layout.html" %}
+{% block header %}
+  <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='styles/configuration.css') }}">
+   <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+{% endblock%}
+{% block title %}Configuración{% endblock %}
+{% block content %}
+	<div class="container">
+		<hr>
+		<h3>Fuente de datos de institutos</h3>
+		<div class="d-blolck">
+			<p>ARCHIVO ACTUAL: <i>{{data.establishment_filename}}</i></p>
+		</div>
+		<form method="POST" enctype=multipart/form-data action="/update_establishment_file">
+		  <div class="form-group">
+		    <label for="exampleInputEmail1">Archivo nuevo</label>
+			<input type="file" name="file">
+		  </div>
+		  <button type="submit" class="btn btn-primary mt-1">Cargar</button>
+		</form>
+		<hr>
+		<h3>Usuario del sistema</h3>
+		<div class="form-input mt-1">
+			<input class="form-control" type="text" id="myInput" onkeyup="filtrar();" placeholder="Buscar por nombre o email">
+			<span class="mr-2">Mostrar:</span>
+			<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="0" checked>
+			<label class="form-check-label" for="exampleRadios1">
+			    Todo
+			  </label>
+			{% if session['actualRole']=='superadmin' %}
+			<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="1" >
+			<label class="form-check-label" for="exampleRadios1">
+			    Admin
+			</label>
+			{% endif %}
+			<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios3" value="2">
+			<label class="form-check-label" for="exampleRadios2">
+			  	Profesores
+			</label>
+			<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios4" value="3">
+			<label class="form-check-label" for="exampleRadios3">
+			  	Estudiantes
+			</label>
+		</div>
+		<table class="table" id="myTable">
+		  <thead>
+		  	<tr>
+		  		<th>Nombre</th>
+		  		<th>Email</th>
+		  		<th>Rol</th>
+		  	</tr>
+		  </thead>
+		  <tbody id="tableBody">
+		  	{% for user in users %}
+		  	{% if not 4 in roles[user.id] %}
+		    <tr class="user_rows">
+		      <td>{{user.name + " " + user.surname}}</td>
+		      <td>{{user.email}}</td>
+		      <td name="usuario{{user.id}}">
+		      	{% if session['actualRole']=='superadmin' %}
+		      	<input class="form-check-input" type="checkbox" onclick="validate(1, {{user.id}});" {% if 1 in roles[user.id]  %} checked {% endif %} id="role1_{{user.id}}">
+						{% endif %}
+		      	<label for="role1">Admin</label>
+		      	<input class="form-check-input" type="checkbox" onclick="validate(2, {{user.id}});" {% if 2 in roles[user.id] %} checked {% endif %} id="role2_{{user.id}}">
+		      	<label for="role1">Profesor</label>
+		      	<input class="form-check-input" type="checkbox" onclick="validate(3, {{user.id}});" {% if 3 in roles[user.id] %} checked {% endif %} id="role3_{{user.id}}">
+		      	<label for="role1">Estudiante</label>
+		      </td>
+		    </tr>
+		    {% endif %}
+		    {% endfor %}
+		  </tbody>
+		</table>
+		<nav aria-label="Page navigation example">
+		  <ul class="pagination justify-content-center" id="pages">
+		   	<li class="page-item disabled" id="anterior">
+		      	<a class="page-link" href="" onclick="getPage({{actualPage - 1}},0);" tabindex="-1" aria-disabled="true">
+		      			Anterior
+		      	</a>
+		    </li> 
+		    {% for page in availablePages %}
+
+		    	{% if page == actualPage%}
+
+		    		<li class="page-item active">
+
+		    	{% else %}
+
+		    		<li class="page-item">
+
+		    	{% endif %}
+
+
+		    	
+		    	<a class="page-link " onclick="getPage({{page}},0);" aria-current="page">
+		    			{{page}}
+			    </a>
+			    </li>
+
+		    {% endfor %}
+		    <li class="page-item disabled" id="siguiente">
+		      	<a class="page-link" onclick="getPage({{actualPage + 1}},0);" aria-current="page">
+	      				Siguiente
+		      	</a>
+		  	</li>
+		  </ul>
+		</nav>
+		<script>
+			$( document ).ready(function() {
+				if ({{actualPage}}<{{maxPage}}){
+					$('#siguiente').removeClass('disabled');
+				}
+			});
+
+			function cambiarRol(user){
+				let role_id = $('#select' + user).val();
+				$.getJSON($SCRIPT_ROOT + "cambiar_rol/" + user + "/" + role_id  , {}, function(data) { return true
+				});
+			}
+
+			function filtrar() {
+			  // Declare variables
+			  var input, filter, table, tr, td, i, txtValue;
+			  input = document.getElementById("myInput");
+			  filter = input.value.toUpperCase();
+			  table = document.getElementById("myTable");
+			  tr = table.getElementsByTagName("tr");
+
+			  // Loop through all table rows, and hide those who don't match the search query
+			  for (i = 0; i < tr.length; i++) {
+			    td = tr[i].getElementsByTagName("td")[0];
+			    if (td) {
+			      txtValue = td.textContent || td.innerText;
+			      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+			        tr[i].style.display = "";
+			      } else {
+			        tr[i].style.display = "none";
+			      }
+			    }
+			  }
+
+			  for (i = 0; i < tr.length; i++) {
+			    td = tr[i].getElementsByTagName("td")[1];
+			    if (td) {
+			      txtValue = td.textContent || td.innerText;
+			      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+			        tr[i].style.display = "";
+			      } else {
+			        tr[i].style.display = "none";
+			      }
+			    }
+			  }
+			}
+
+			function validate(num, user_id){
+			  	cbox = $('#role'+ num + "_" + user_id);
+			  	if(cbox.is(":checked")){
+			  		$.getJSON($SCRIPT_ROOT + "addRoleToUser/" + num + "&" + user_id,{}, function(data) {});
+			  	}else{
+			  		$.ajax({
+					  url: $SCRIPT_ROOT + "deleteRoleToUser/" + num + "&" + user_id ,
+					  type: 'PUT',
+					  data: '',
+					  success: function(data) {
+					  }
+					});
+			  	}
+			}
+
+			function getRole(){
+				$.getJSON($SCRIPT_ROOT + "addRoleToUser/" + num + "&" + user_id,{}, function(data) {});
+			}
+		
+
+			function armar_body(data, actualRole){
+				var body = $('#tableBody');
+				datos = data.result;
+				for (var i=0; i<datos.length;i++){
+					var aux = datos[i]
+					if (!data.roles[aux[0]].includes(4)){
+							var string = ("<tr><td>"+ aux[1] + " " + aux[2] + "</td><td>" + aux[3] + "</td><td name=\"usuario" + aux[0] + "\">");
+							var rol="{{session.actualRole}}";
+							if (rol=='superadmin'){
+								string = string + ("<input class=\"form-check-input\" type=\"checkbox\" onclick=\"validate(1, "+ aux[0] + ");\"");
+								if (data.roles[aux[0]].includes(1)){
+									string = string + " checked ";
+								}
+								string = string + ("id=\"role1_" + aux[0] + "\"><label for=\"role1\">Admin</label>");
+							} else {
+								string = string + ("<label for=\"role1\">Admin</label>");
+							}
+							string = string + ("<input class=\"form-check-input\" type=\"checkbox\" onclick=\"validate(2, "+ aux[0] + ");\"");
+							if (data.roles[aux[0]].includes(2)){
+								string = string + " checked ";
+							}
+							string = string + ("id=\"role2_" + aux[0] + "\"><label for=\"role2\">Profesor</label><input class=\"form-check-input\" type=\"checkbox\" onclick=\"validate(3, "+ aux[0] + ");\"");
+							if (data.roles[aux[0]].includes(3)){
+								string = string + " checked ";
+							}
+							string = string + ("id=\"role3_" + aux[0] + "\"><label for=\"role3\">Estudiante</label></td></tr>");
+							body.append(string);
+						}
+					}
+			}
+
+			function getPage(page, filter, role){
+				$.getJSON("/configuration_AJAX/" + page + "&" + filter, function(data){
+					var body = $('#tableBody');
+					body.empty();
+					armar_body(data,role);
+					var pages = $('#pages');
+					pages.empty();
+					var availablePages = data.availablePages;
+					var previousPage = page - 1;
+					var str=("<li class=\"page-item disabled\" id=\"anterior\"><a class=\"page-link\" onclick=\"getPage(" + previousPage + "," + filter + ");\" tabindex=\"-1\" aria-disabled=\"true\">Anterior</a></li>");
+					for (var i=0;i<availablePages.length;i++){
+						if (availablePages[i]==page){
+							str = str + ("<li class=\"page-item active\">");
+						}else{
+							str = str + ("<li class=\"page-item\">");
+						}
+						str = str + ("<a class=\"page-link\" aria-current=\"page\" onclick=\"getPage(" + availablePages[i] + "," + filter + ");\">" + availablePages[i] + "</a></li>");
+					}
+					var nextPage = page +1;
+					str = str + (" <li class=\"page-item disabled\" id=\"siguiente\"><a class=\"page-link\" onclick=\"getPage(" + nextPage + "," + filter + ");\" aria-current=\"page\">Siguiente</a></li>");
+					pages.append(str);
+					if (page=={{maxPage}}){
+						$('#siguiente').addClass('disabled');
+					}
+					if (page>1){
+						$('#anterior').removeClass('disabled');
+					}
+					if (page==1){
+						$('#anterior').addClass('disabled');
+					}
+					if (page<{{maxPage}}){
+						$('#siguiente').removeClass('disabled');
+					}
+				});
+			}
+
+			var filter;
+
+			$('input:radio[name="exampleRadios"]').on('change', function(){
+				filter = $('input:radio[name="exampleRadios"]:checked').val();
+				console.log(filter);
+				getPage({{actualPage}}, filter);
+			});
+
+		</script>
+	
+{% endblock %}

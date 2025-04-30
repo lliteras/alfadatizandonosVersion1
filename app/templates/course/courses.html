@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block header %}
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='styles/courses.css') }}">
+{% endblock%}
+{% block title %}Cursos{% endblock %}
+{% block content %}
+	<div class="container p-3">
+		<h1>Mis cursos</h1>
+		<table class="table table-hover">
+		  <thead>
+		    <tr>
+		      <th scope="col">Nombre</th>
+		      <th scope="col">Fecha de comienzo</th>
+		      <th scope="col">Fecha de fin</th>
+		      <th scope="col">Establecimiento educativo</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+		  	{% for curso in cursos %}
+		    <tr class="course-row" onclick="function1({{curso.id}});">
+		      <td>{{ curso.name }}</td>
+		      <td>{{ curso.start_date }}</td>
+		      <td>{{ curso.end_date }}</td>
+		      <td>{{ curso.establishment_name }}</td>
+		    </tr>
+		    {% endfor %}
+		  </tbody>
+		</table>
+		<div class="d-grid gap-2">
+			<a class="btn btn-large btn-info" href="/new_course">Crear nuevo curso</a>
+		</div>
+	</div>
+	<script>
+		function function1(id){
+			window.location.href = '/courses/' + id
+			
+		}
+	</script>
+{% endblock %}

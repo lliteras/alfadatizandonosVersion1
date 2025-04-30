@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+{% block title %}Actividades{% endblock %}
+{% block content %}
+<div class="container" style="width: 60%;background-color:#89C2D9; padding-bottom: 15px;" align="center">
+	<h1 style="">Actividad de {{student.name}} {{student.surname}}</h1>
+	<hr>
+	<h3 align="left">Entregas realizadas por el alumno</h3>
+	<table class="table" style="">
+    	<thead>
+    		<tr>
+    			<th>Fecha</th>
+    			<th>Ver entrega</th>
+    		</tr>
+    	</thead>
+    	<tbody>
+    		{% for resolution in resolutions %}
+    			<tr>
+    			<td>{{resolution.date_resolution}}</td>
+    			<td>
+    				<button type="button" class="btn btn-primary">
+							<a href="{{url_for('static', filename='uploads/resolutions/resolution_' + (resolution.id_resolution | string) + '.pdf' ) }}">Resolución</a>
+						</button>
+    			</td>
+    			</tr>
+    		{% endfor%}
+    	</tbody>
+    </table>	
+
+    <hr>
+    <div class="card m-2" align="left">
+		<div class="card-body">
+			<h3 align="left">Enunciado<h2>
+			<h5 align="">{{activity.statement_title}}</h5>
+			<p><i>{{activity.statement}}</i></p>
+		</div>
+	</div>
+	<div class="container" align="left">
+		<h5>Corrección</h5>
+		<form method="POST" action="/activity/correctActivity/{{activity.id}}&{{student.id}}">
+		  {% if activity.has_calification %}
+		  <div class="form-group">
+		    <label for="calification">Nota</label>
+		    <input type="number" name="calification" min="0" max="10" class="form-control" id="calification" placeholder="Ingresar nota">
+		  </div>
+		  {% else %}
+		  <span>Esta actividad no posee calificación</span>
+		  {% endif %}
+		  <div class="form-group">
+		    <label for="comment">Comentario</label>
+		    <textarea rows="3" class="form-control" id="comment" name="comment" placeholder="Comentario"></textarea>
+		  </div>
+		  <div class="d-grid gap-2 mt-2">
+		  	<button type="submit" class="btn btn-primary">Enviar corrección</button>
+		  </div>
+		</form>
+		<div class="d-grid gap-2 mt-2">
+			<a class="btn btn-primary"  href="/activities/view_activity_data/{{activity.id}}">Volver</a>
+		</div>
+	</div>
+</div>
+{% endblock %}
